@@ -1,5 +1,3 @@
-
-
 class Livro {
     constructor(titulo, qtde, edicao, caminho, descricao, isbn) {
         this.titulo = titulo;

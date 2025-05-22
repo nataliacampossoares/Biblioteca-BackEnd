@@ -1,0 +1,22 @@
+const editoraDAO = require("../model/editoraModel/editora.dao");
+
+const adicionarEditora = async function (editora) {
+  try {
+    editpraDAO.adicionarEditora(editora);
+    return;
+  } catch (error) {
+    console.log("Erro no controller: adicionarEditora()", error);
+  }
+};
+
+const listarEditoras = async function () {
+  try {
+    const result = await editoraDAO.listarEditoras();
+    return result;
+  } catch (error) {
+    console.log("Erro no controller: listarEditoras()", error);
+    throw error;
+  }
+};
+
+module.exports = { adicionarEditora, listarEditoras }
