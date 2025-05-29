@@ -10,16 +10,16 @@ const listarEditoras = async function () {
   };
 };
 
-const adicionarEditora = async function (editora) {
+const cadastrarEditora = async function (editora) {
   const atributosEditora = editora.convertToArray();
   const query = "INSERT INTO editoras(nome_editora) values ($1)";
   try{
      await Pool.query(query, atributosEditora);
      return;
   }catch(error){
-    console.error('Erro na function adicionarEditora()', error);
+    console.error('Erro na function cadastrarEditora()', error);
     throw error;
   }
 };
 
-module.exports = {adicionarEditora, listarEditoras};
+module.exports = {cadastrarEditora, listarEditoras};

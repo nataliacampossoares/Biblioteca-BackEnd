@@ -21,6 +21,12 @@ const editoraController = require('./controller/editora.controller');
 const editora = require('./entidades/editora');
 const Editora = require('./entidades/editora');
 
+const categoriaController = require('./controller/categoria.controller');
+const categoria = require('./entidades/categoria');
+const Categoria = require('./entidades/categoria');
+
+
+
 //Configuração do Handlebars
 //Informa ao express qual template engine será usado
 app.engine('handlebars', handlebars.engine({defaultLayout: 'main'}));
@@ -38,7 +44,11 @@ app.get('/listarLivros', function(req, res){
 
   app.get('/listarAutores', function(req, res){
     const resultado = autorController.listarAutores();
-    resultado.then(resp => {res.render('listagemAutores', {resp})});
+    
+    resultado.then(resp => {
+      return res.send(resp)
+
+    });
   });
 
   app.get('/listarCursos', function(req, res){
@@ -64,6 +74,49 @@ app.get('/listarLivros', function(req, res){
   app.get('/listarEditoras', function(req, res){
     const resultado = editoraController.listarEditoras();
     resultado.then(resp => {res.render('listagemEditoras', {resp})});
+  });
+
+  app.get('/cadastrarEditora', function(req, res){
+    res.render('formularioEditoras')
+  })
+
+  app.post('/cadastrarEditora', async function(req, res){
+    try {
+      const nova_editora = new Editora(req.body.nome); 
+      await editoraController.cadastrarEditora(nova_editora);
+      res.render('formularioEditoras', { editora: nova_editora });
+    } catch (error) {
+      console.error("Erro ao cadastrar editora:", error);
+      res.status(500).send("Erro ao cadastrar editora.");
+    }
+  });
+
+
+  app.get('/listarCategorias', function(req, res){
+    const resultado = categoriaController.listarCategorias();
+    resultado.then(resp => {res.render('listagemCategorias', {resp})});
+  });
+
+  app.get('/cadastrarCategoria', function(req, res){
+    res.render('formularioCategorias')
+  })
+
+  app.post('/cadastrarCategoria', async function(req, res){
+    try {
+      let idPai = req.body.id_categoria_pai;
+      if (!idPai || idPai === '') {
+        idPai = null;
+      } else {
+        idPai = parseInt(idPai);
+      }
+  
+      const nova_categoria = new Categoria(req.body.nome, idPai); 
+      await categoriaController.cadastrarCategoria(nova_categoria);
+      res.render('formularioCategorias', { categoria: nova_categoria }); // <-- ajuste a variável também
+    } catch (error) {
+      console.error("Erro ao cadastrar categoria:", error);
+      res.status(500).send("Erro ao cadastrar categoria.");
+    }
   });
 
 app.get('/', (req, res)=>{
