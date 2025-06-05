@@ -22,4 +22,33 @@ const adicionarAutor = async function (autor) {
   }
 };
 
-module.exports = {adicionarAutor, listarAutores};
+const removerAutor = async function (id) {
+  try{
+    const { rows } = await Pool.query(`DELETE FROM autores WHERE id = $1`, [id]);
+    return rows;
+  }catch(error){
+    console.error('Erro na function removerAutor()', error);
+    throw error;
+  };
+}
+
+const atualizarAutor = async function(autor){
+  try {
+    const query = `
+      UPDATE autores
+      SET nome_autor = $1
+      WHERE id = $2
+      RETURNING *;
+    `;
+    const values = [autor.nome, autor.id];
+
+    const { rows } = await Pool.query(query, values);
+
+    return rows[0]; // retorna o autor atualizado (ou undefined se não achou)
+  } catch (error) {
+    console.error('Erro na function atualizarAutor()', error);
+    throw error;
+  }
+}
+
+module.exports = {adicionarAutor, listarAutores, removerAutor, atualizarAutor};

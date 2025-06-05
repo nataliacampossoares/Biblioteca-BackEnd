@@ -1,6 +1,9 @@
 const express = require('express')
 const app = express()
+const cors = require('cors')
 const port = 3000
+app.use(express.json())
+app.use(cors())
 
 
 const handlebars = require('express-handlebars');
@@ -42,18 +45,64 @@ app.get('/listarLivros', function(req, res){
     resultado.then(resp => {res.render('listagemLivros', {resp})});
   });
 
-  app.get('/listarAutores', function(req, res){
-    const resultado = autorController.listarAutores();
+app.get('/listarAutores', function(req, res){
+  const resultado = autorController.listarAutores();
     
-    resultado.then(resp => {
-      return res.send(resp)
-
-    });
+  resultado.then(resp => {return res.send(resp)});
   });
+
+app.get('/cadastrarAutor', function(req, res){
+  //colocar pra retornar a pagina de cadastro
+  return true
+})
+
+app.post('/cadastrarAutor', async function(req, res) {
+  try {
+    const novo_autor = new Autor(req.body.nome_autor);
+
+    await autorController.cadastrarAutor(novo_autor);
+
+    res.status(201).send("Autor cadastrado com sucesso.");
+  } catch (error) {
+    console.error("Erro ao cadastrar autor:", error);
+    res.status(500).send("Erro ao cadastrar autor.");
+  }
+});
+
+app.get('/removerAutor/:id', async function(req, res) {
+  try {
+    await autorController.removerAutor(req.params.id);
+    res.status(200).send("Autor removido com sucesso.");
+  } catch (error) {
+    console.error("Erro ao remover autor:", error);
+    res.status(500).send("Erro ao remover autor.");
+  }
+});
+
+app.get('/alterarAutor/:id', function(req, res) {
+  //nao sei oq vai ter aqui
+})
+
+app.post('/alterarAutor/:id', async function(req, res) {
+  const edicao_autor = {
+    id: req.params.id,
+    nome: req.body.nome_autor
+  };
+
+  try {
+    await autorController.atualizarAutor(edicao_autor);
+    res.status(200).send("Autor atualizado com sucesso.");
+  } catch (error) {
+    console.error("Erro ao atualizar autor:", error);
+    res.status(500).send("Erro ao atualizar autor.");
+  }
+});
+
+
 
   app.get('/listarCursos', function(req, res){
     const resultado = cursoController.listarCursos();
-    resultado.then(resp => {res.render('listagemCursos', {resp})});
+    resultado.then(resp => {return res.send(resp)});
   });
 
   app.get('/cadastrarCurso', function(req, res){
@@ -62,9 +111,11 @@ app.get('/listarLivros', function(req, res){
 
   app.post('/cadastrarCurso', async function(req, res){
     try {
-      const novo_curso = new Curso(req.body.nome); 
+      const novo_curso = new Curso(req.body.nome);
+  
       await cursoController.cadastrarCurso(novo_curso);
-      res.render('formularioCursos', { curso: novo_curso });
+  
+      res.status(201).send("Curso cadastrado com sucesso.");
     } catch (error) {
       console.error("Erro ao cadastrar curso:", error);
       res.status(500).send("Erro ao cadastrar curso.");
@@ -73,7 +124,7 @@ app.get('/listarLivros', function(req, res){
 
   app.get('/listarEditoras', function(req, res){
     const resultado = editoraController.listarEditoras();
-    resultado.then(resp => {res.render('listagemEditoras', {resp})});
+    resultado.then(resp => {return res.send(resp)});
   });
 
   app.get('/cadastrarEditora', function(req, res){
@@ -82,9 +133,11 @@ app.get('/listarLivros', function(req, res){
 
   app.post('/cadastrarEditora', async function(req, res){
     try {
-      const nova_editora = new Editora(req.body.nome); 
+      const nova_editora = new Editora(req.body.nome_autor);
+  
       await editoraController.cadastrarEditora(nova_editora);
-      res.render('formularioEditoras', { editora: nova_editora });
+  
+      res.status(201).send("Editora cadastrada com sucesso.");
     } catch (error) {
       console.error("Erro ao cadastrar editora:", error);
       res.status(500).send("Erro ao cadastrar editora.");
@@ -94,7 +147,7 @@ app.get('/listarLivros', function(req, res){
 
   app.get('/listarCategorias', function(req, res){
     const resultado = categoriaController.listarCategorias();
-    resultado.then(resp => {res.render('listagemCategorias', {resp})});
+    resultado.then(resp => {res.render('listagemLivros', {resp})});
   });
 
   app.get('/cadastrarCategoria', function(req, res){
@@ -110,14 +163,17 @@ app.get('/listarLivros', function(req, res){
         idPai = parseInt(idPai);
       }
   
-      const nova_categoria = new Categoria(req.body.nome, idPai); 
-      await categoriaController.cadastrarCategoria(nova_categoria);
-      res.render('formularioCategorias', { categoria: nova_categoria }); // <-- ajuste a variável também
-    } catch (error) {
-      console.error("Erro ao cadastrar categoria:", error);
-      res.status(500).send("Erro ao cadastrar categoria.");
+        const nova_categoria = new Categoria(req.body.nome, idPai);
+    
+        await categoriaController.cadastrarCategoria(nova_categoria);
+    
+        res.status(201).send("Categoria cadastrada com sucesso.");
+      } catch (error) {
+        console.error("Erro ao cadastrar categoria:", error);
+        res.status(500).send("Erro ao cadastrar categoria.");
+      }
     }
-  });
+  );
 
 app.get('/', (req, res)=>{
     res.send("OLAAAAAAAAAA TESTE")
