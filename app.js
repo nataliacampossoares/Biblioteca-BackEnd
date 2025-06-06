@@ -167,24 +167,24 @@ app.post("/cadastrarEditora", async function (req, res) {
 app.get("/listarCategorias", function (req, res) {
   const resultado = categoriaController.listarCategorias();
   resultado.then((resp) => {
-    res.render("listagemLivros", { resp });
+    return res.send(resp);
   });
 });
 
 app.get("/cadastrarCategoria", function (req, res) {
-  res.render("formularioCategorias");
+  //
 });
 
 app.post("/cadastrarCategoria", async function (req, res) {
   try {
-    let idPai = req.body.id_categoria_pai;
+    let idPai = req.body.id_pai;
     if (!idPai || idPai === "") {
       idPai = null;
     } else {
       idPai = parseInt(idPai);
     }
 
-    const nova_categoria = new Categoria(req.body.nome, idPai);
+    const nova_categoria = new Categoria(req.body.nome_categoria, idPai);
 
     await categoriaController.cadastrarCategoria(nova_categoria);
 
@@ -192,6 +192,32 @@ app.post("/cadastrarCategoria", async function (req, res) {
   } catch (error) {
     console.error("Erro ao cadastrar categoria:", error);
     res.status(500).send("Erro ao cadastrar categoria.");
+  }
+});
+
+app.get("/removerCategoria/:id", async function (req, res) {
+  try {
+    await categoriaController.removerCategoria(req.params.id);
+    res.status(200).send("Categoria removida com sucesso.");
+  } catch (error) {
+    console.error("Erro ao remover categoria:", error);
+    res.status(500).send("Erro ao remover categoria.");
+  }
+});
+
+app.post("/alterarCategoria/:id", async function (req, res) {
+  const categoriaAtualizada = {
+    id_categoria: req.params.id,
+    nome_categoria: req.body.nome_categoria,
+    id_pai: req.body.id_pai || null 
+  };
+
+  try {
+    await categoriaController.atualizarCategoria(categoriaAtualizada);
+    res.status(200).send("Categoria atualizada com sucesso.");
+  } catch (error) {
+    console.error("Erro ao atualizar categoria:", error);
+    res.status(500).send("Erro ao atualizar categoria.");
   }
 });
 

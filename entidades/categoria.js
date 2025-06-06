@@ -1,11 +1,11 @@
 class Categoria {
-    constructor(categoria, id_categoria_pai = null) {
-        this.categoria = categoria;
-        this.id_categoria_pai = id_categoria_pai;
+    constructor(nome_categoria, id_pai = null) {
+        this.nome_categoria = nome_categoria;
+        this.id_pai = id_pai;
     }
 
     convertToArray(){
-        return [this.categoria, this.id_categoria_pai];
+        return [this.nome_categoria, this.id_pai];
     }  
 }
 
