@@ -20,4 +20,24 @@ const listarCursos = async function () {
   }
 };
 
-module.exports = { cadastrarCurso, listarCursos };
+const removerCurso = async function (id) {
+  try {
+    await cursoDAO.removerCurso(id);
+    return true;
+  } catch (error) {
+    console.log("Erro no controller: removerCurso()", error);
+    throw error;
+  }
+}
+
+const atualizarCurso = async function(curso){
+  try {
+    const resposta = await cursoDAO.atualizarCurso(curso);
+    return resposta;
+  } catch (error) {
+    console.error("Erro no controller: atualizarCurso()", error);
+    throw error;
+  }
+}
+
+module.exports = { cadastrarCurso, listarCursos, removerCurso, atualizarCurso };
