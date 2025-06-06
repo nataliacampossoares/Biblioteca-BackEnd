@@ -18,4 +18,22 @@ const listarLocatarios = async function () {
   }
 };
 
-module.exports = { cadastrarLocatario, listarLocatarios };
+const desativarLocatario = async function(id){
+  try{
+    return await locatarioDAO.desativarLocatario(id)
+  }catch(error){
+    console.error("Erro no controller: desativarLocatario()", error);
+    throw error;
+  }
+}
+
+const atualizarLocatario = async function (locatario){
+  try{
+    return await locatarioDAO.atualizarLocatario(locatario)
+  }catch(error){
+    console.error("Erro no controller: atualizarLocatario()", error);
+    throw error;
+  }
+}
+
+module.exports = { cadastrarLocatario, listarLocatarios, desativarLocatario, atualizarLocatario };

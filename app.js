@@ -25,13 +25,12 @@ const locatarioController = require("./controller/locatario.controller");
 const Locatario = require("./entidades/locatario");
 const locatarioRN = require("./model/locatarioModel/locatario.rn");
 
-
 //LIVROS------------------------------------------------------------------
 
 app.get("/listarLivros", function (req, res) {
   const resultado = livroController.listarLivros();
   resultado.then((resp) => {
-    res.render("listagemLivros", { resp });
+    return res.send(resp);
   });
 });
 
@@ -263,7 +262,7 @@ app.post("/alterarCategoria/:id", async function (req, res) {
 
 //LOCATARIO ------------------------------------------------------------------------------
 
-app.post("/cadastrarLocatario", async (req, res) => {
+app.post("/cadastrarLocatario/:id", async (req, res) => {
   try {
     const { id_curso, nome, data_de_nascimento, telefone } = req.body;
     const novo = new Locatario(id_curso, nome, data_de_nascimento, telefone);
@@ -281,6 +280,34 @@ app.get("/listarLocatarios", async function (req, res) {
   } catch (error) {
     console.error("Erro ao listar locatários:", error);
     res.status(500).send("Erro ao listar locatários.");
+  }
+});
+
+app.get("/desativarLocatario/:id", async function (req, res) {
+  try {
+    await locatarioController.desativarLocatario(req.params.id);
+    res.status(200).send("Locatário desativado.");
+  } catch (error) {
+    console.error("Erro ao desativar usuário:", error);
+    res.status(500).send("Erro ao desativar usuário.");
+  }
+});
+
+app.post("/alterarLocatario/:id", async function (req, res) {
+  const locatarioAtualizado = {
+    id: req.params.id,
+    id_curso: req.body.id_curso,
+    nome: req.body.nome,
+    data_de_nascimento: req.body.data_de_nascimento,
+    telefone: req.body.telefone,
+  };
+
+  try {
+    await locatarioController.atualizarLocatario(locatarioAtualizado);
+    res.status(200).send("Locatário atualizado com sucesso.");
+  } catch (error) {
+    console.error("Erro ao atualizar locatário:", error);
+    res.status(500).send("Erro ao atualizar locatário.");
   }
 });
 

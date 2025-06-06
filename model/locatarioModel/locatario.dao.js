@@ -24,5 +24,41 @@ const listarLocatarios = async function () {
   }
 };
 
+const desativarLocatario = async function (id) {
+  try {
+    const query = `UPDATE locatarios SET isAtivo = false WHERE id = $1`;
+    const values = [id];
 
-module.exports = { cadastrarLocatario, listarLocatarios };
+    const { rows } = await Pool.query(query, values);
+
+    return rows[0];
+  } catch (error) {
+    console.error("Erro na function desativarLocatario()", error);
+    throw error;
+  }
+};
+
+const atualizarLocatario = async function(locatario){
+  console.log(locatario.id_curso)
+  try {
+    const query = `
+      UPDATE locatarios
+      SET id_curso = $1,
+      nome = $2,
+      data_de_nascimento = $3,
+      telefone = $4
+      WHERE id = $5
+      RETURNING *;
+    `;
+    const values = [locatario.id_curso, locatario.nome, locatario.data_de_nascimento, locatario.telefone, locatario.id];
+
+    const { rows } = await Pool.query(query, values);
+
+    return rows[0]; 
+  } catch (error) {
+    console.error('Erro na function atualizarLocatario()', error);
+    throw error;
+  }
+}
+
+module.exports = { cadastrarLocatario, listarLocatarios, desativarLocatario, atualizarLocatario };
