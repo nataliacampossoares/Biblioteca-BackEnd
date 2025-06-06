@@ -311,6 +311,26 @@ app.post("/alterarLocatario/:id", async function (req, res) {
   }
 });
 
+app.post("/cadastrarAluno", async (req, res) => {
+  try {
+    // const { id_curso, nome, data_de_nascimento, telefone, ra } = req.body;
+
+    // const novo = new Locatario(id_curso, nome, data_de_nascimento, telefone);
+    // const idLocatario = await locatarioRN.cadastrarLocatario(novo);
+
+    await Pool.query(
+      "INSERT INTO alunos (id_locatario, ra) VALUES ($1, $2)",
+      [idLocatario, ra]
+    );
+
+    res.status(201).send("Aluno cadastrado com sucesso.");
+  } catch (error) {
+    console.error(error);
+    res.status(400).send("Erro ao cadastrar aluno.");
+  }
+});
+
+
 //-------------------------------------------------------------------------
 
 app.get("/", (req, res) => {

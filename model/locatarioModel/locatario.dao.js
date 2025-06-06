@@ -4,9 +4,11 @@ const cadastrarLocatario = async function (locatario) {
   const query = `
     INSERT INTO locatarios (id_curso, nome, data_de_nascimento, telefone)
     VALUES ($1, $2, $3, $4)
+    RETURNING id
   `;
   try {
-    await Pool.query(query, locatario.convertToArray());
+    await Pool.query(query, locatario.convertToArray())
+    return rows[0].id;;
   } catch (error) {
     console.error("Erro no DAO: cadastrarLocatario()", error);
     throw error;
