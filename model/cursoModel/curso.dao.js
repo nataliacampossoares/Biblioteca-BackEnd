@@ -52,4 +52,14 @@ const atualizarCurso = async function(curso){
 }
 
 
-module.exports = {cadastrarCurso, listarCursos, atualizarCurso, removerCurso};
+const buscarCursoPorId = async function (id) {
+  const query = "SELECT * FROM cursos WHERE id = $1";
+  console.log("Buscando curso com ID:", id);
+  const { rows } = await Pool.query(query, [id]);
+  console.log("Resultado da busca:", rows);
+  return rows[0];
+};
+
+
+
+module.exports = {cadastrarCurso, listarCursos, atualizarCurso, removerCurso, buscarCursoPorId};

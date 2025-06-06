@@ -10,20 +10,23 @@ const livro = require("./entidades/livro");
 const Livro = require("./entidades/livro");
 
 const autorController = require("./controller/autor.controller");
-const autor = require("./entidades/autor");
 const Autor = require("./entidades/autor");
 
 const cursoController = require("./controller/curso.controller");
-const curso = require("./entidades/curso");
 const Curso = require("./entidades/curso");
 
 const editoraController = require("./controller/editora.controller");
-const editora = require("./entidades/editora");
 const Editora = require("./entidades/editora");
 
 const categoriaController = require("./controller/categoria.controller");
-const categoria = require("./entidades/categoria");
 const Categoria = require("./entidades/categoria");
+
+const locatarioController = require("./controller/locatario.controller");
+const Locatario = require("./entidades/locatario");
+const locatarioRN = require("./model/locatarioModel/locatario.rn");
+
+
+//LIVROS------------------------------------------------------------------
 
 app.get("/listarLivros", function (req, res) {
   const resultado = livroController.listarLivros();
@@ -31,6 +34,8 @@ app.get("/listarLivros", function (req, res) {
     res.render("listagemLivros", { resp });
   });
 });
+
+//AUTORES -------------------------------------------------------------------
 
 app.get("/listarAutores", function (req, res) {
   const resultado = autorController.listarAutores();
@@ -87,6 +92,8 @@ app.post("/alterarAutor/:id", async function (req, res) {
   }
 });
 
+//CURSOS --------------------------------------------------------------------------------
+
 app.get("/listarCursos", function (req, res) {
   const resultado = cursoController.listarCursos();
   resultado.then((resp) => {
@@ -100,7 +107,7 @@ app.get("/cadastrarCurso", function (req, res) {
 
 app.post("/cadastrarCurso", async function (req, res) {
   try {
-    const novo_curso = new Curso(req.body.nome);
+    const novo_curso = new Curso(req.body.nome_curso);
 
     await cursoController.cadastrarCurso(novo_curso);
 
@@ -139,6 +146,8 @@ app.post("/alterarCurso/:id", async function (req, res) {
     res.status(500).send("Erro ao atualizar curso.");
   }
 });
+
+//EDITORAS ---------------------------------------------------------------------
 
 app.get("/listarEditoras", function (req, res) {
   const resultado = editoraController.listarEditoras();
@@ -193,6 +202,7 @@ app.post("/alterarEditora/:id", async function (req, res) {
   }
 });
 
+//CATEGORIAS ------------------------------------------------------------------------
 
 app.get("/listarCategorias", function (req, res) {
   const resultado = categoriaController.listarCategorias();
@@ -239,7 +249,7 @@ app.post("/alterarCategoria/:id", async function (req, res) {
   const categoriaAtualizada = {
     id_categoria: req.params.id,
     nome_categoria: req.body.nome_categoria,
-    id_pai: req.body.id_pai || null 
+    id_pai: req.body.id_pai || null,
   };
 
   try {
@@ -250,6 +260,31 @@ app.post("/alterarCategoria/:id", async function (req, res) {
     res.status(500).send("Erro ao atualizar categoria.");
   }
 });
+
+//LOCATARIO ------------------------------------------------------------------------------
+
+app.post("/cadastrarLocatario", async (req, res) => {
+  try {
+    const { id_curso, nome, data_de_nascimento, telefone } = req.body;
+    const novo = new Locatario(id_curso, nome, data_de_nascimento, telefone);
+    await locatarioRN.cadastrarLocatario(novo);
+    res.status(201).send("Locatário cadastrado com sucesso.");
+  } catch (error) {
+    res.status(400).send("Curso inexistente");
+  }
+});
+
+app.get("/listarLocatarios", async function (req, res) {
+  try {
+    const locatarios = await locatarioController.listarLocatarios();
+    res.status(200).json(locatarios);
+  } catch (error) {
+    console.error("Erro ao listar locatários:", error);
+    res.status(500).send("Erro ao listar locatários.");
+  }
+});
+
+//-------------------------------------------------------------------------
 
 app.get("/", (req, res) => {
   res.send("OLAAAAAAAAAA TESTE");

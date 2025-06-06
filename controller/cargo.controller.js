@@ -5,7 +5,7 @@ const listarCargos = async function () {
     const result = await cargoDAO.listarCargos();
     return result;
   } catch (error) {
-    console.log("Erro no controller: listarAutores()", error);
+    console.log("Erro no controller: listarCargos()", error);
     throw error;
   }
 };
