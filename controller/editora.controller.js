@@ -19,4 +19,25 @@ const listarEditoras = async function () {
   }
 };
 
-module.exports = { cadastrarEditora, listarEditoras }
+const removerEditora = async function (id) {
+  try {
+    await editoraDAO.removerEditora(id);
+    return true;
+  } catch (error) {
+    console.log("Erro no controller: removerEditora()", error);
+    throw error;
+  }
+}
+
+const atualizarEditora = async function(editora){
+  try {
+    const resposta = await editoraDAO.atualizarEditora(editora);
+    return resposta;
+  } catch (error) {
+    console.error("Erro no controller: atualizarEditora()", error);
+    throw error;
+  }
+}
+
+
+module.exports = { cadastrarEditora, listarEditoras, removerEditora, atualizarEditora }

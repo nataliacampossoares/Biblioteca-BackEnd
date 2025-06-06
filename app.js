@@ -153,7 +153,7 @@ app.get("/cadastrarEditora", function (req, res) {
 
 app.post("/cadastrarEditora", async function (req, res) {
   try {
-    const nova_editora = new Editora(req.body.nome_autor);
+    const nova_editora = new Editora(req.body.nome_editora);
 
     await editoraController.cadastrarEditora(nova_editora);
 
@@ -163,6 +163,36 @@ app.post("/cadastrarEditora", async function (req, res) {
     res.status(500).send("Erro ao cadastrar editora.");
   }
 });
+
+app.get("/removerEditora/:id", async function (req, res) {
+  try {
+    await editoraController.removerEditora(req.params.id);
+    res.status(200).send("Editora removida com sucesso.");
+  } catch (error) {
+    console.error("Erro ao remover editora:", error);
+    res.status(500).send("Erro ao remover curso.");
+  }
+});
+
+app.get("/alterarEditora/:id", function (req, res) {
+  //nao sei oq vai ter aqui
+});
+
+app.post("/alterarEditora/:id", async function (req, res) {
+  const edicao_editora = {
+    id: req.params.id,
+    nome_editora: req.body.nome_editora,
+  };
+
+  try {
+    await editoraController.atualizarEditora(edicao_editora);
+    res.status(200).send("Editora atualizada com sucesso.");
+  } catch (error) {
+    console.error("Erro ao atualizar editora:", error);
+    res.status(500).send("Erro ao atualizar editora.");
+  }
+});
+
 
 app.get("/listarCategorias", function (req, res) {
   const resultado = categoriaController.listarCategorias();
