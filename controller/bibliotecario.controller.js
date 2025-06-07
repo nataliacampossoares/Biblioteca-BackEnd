@@ -1,11 +1,15 @@
-const bibliotecarioDAO = require("../model/bibliotecarioModel/bibliotecario.dao");
+const bibliotecarioRN = require("../model/bibliotecarioModel/bibliotecario.rn");
 
 const cadastrarBibliotecario = async function ({ id_locatario, login, senha }) {
   try {
-    await bibliotecarioDAO.cadastrarBibliotecario({ id_locatario, login, senha });
-    return;
+    await bibliotecarioRN.cadastrarBibliotecario({
+      id_locatario,
+      login,
+      senha,
+    });
   } catch (error) {
-    console.log("Erro no controller: adicionarBibliotecario()", error);
+    console.error("Erro no controller: cadastrarBibliotecario()", error);
+    throw error;
   }
 };
 

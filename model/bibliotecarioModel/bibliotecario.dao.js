@@ -14,4 +14,17 @@ const cadastrarBibliotecario = async function ({ id_locatario, login, senha }) {
   }
 };
 
-module.exports = { cadastrarBibliotecario };
+const buscarBibliotecarioPorLogin = async function (login) {
+    const query = `SELECT * FROM bibliotecarios WHERE login = $1`;
+    const values = [login];
+  
+    try {
+      const result = await Pool.query(query, values);
+      return result.rows[0];
+    } catch (error) {
+      console.error("Erro no DAO: buscarBibliotecarioPorLogin()", error);
+      throw error;
+    }
+  };
+
+module.exports = { cadastrarBibliotecario, buscarBibliotecarioPorLogin };

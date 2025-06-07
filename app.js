@@ -306,6 +306,10 @@ app.post("/cadastrarLocatario", async (req, res) => {
       return res.status(400).send("RA já cadastrado");
     }
 
+    if (error.message === "Login bibliotecario") {
+      return res.status(400).send("Login já cadastrado");
+    }
+
     if (error.message === "Curso informado não existe.") {
       return res.status(400).send("Curso inexistente");
     }
