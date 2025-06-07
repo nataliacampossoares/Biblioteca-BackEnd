@@ -25,6 +25,9 @@ const locatarioController = require("./controller/locatario.controller");
 const Locatario = require("./entidades/locatario");
 const locatarioRN = require("./model/locatarioModel/locatario.rn");
 
+const alunoController = require("./controller/aluno.controller");
+const Aluno = require("./entidades/aluno");
+
 //LIVROS------------------------------------------------------------------
 
 app.get("/listarLivros", function (req, res) {
@@ -262,11 +265,28 @@ app.post("/alterarCategoria/:id", async function (req, res) {
 
 //LOCATARIO ------------------------------------------------------------------------------
 
-app.post("/cadastrarLocatario/:id", async (req, res) => {
+app.post("/cadastrarLocatario", async (req, res) => {
+  console.log("ola app");
   try {
-    const { id_curso, nome, data_de_nascimento, telefone } = req.body;
+    const {
+      id_curso,
+      nome,
+      data_de_nascimento,
+      telefone,
+      tipo,
+      ra = null,
+      login = null,
+      senha = null,
+    } = req.body;
     const novo = new Locatario(id_curso, nome, data_de_nascimento, telefone);
-    await locatarioRN.cadastrarLocatario(novo);
+    const id_locatario = await locatarioRN.cadastrarLocatario(novo);
+
+    console.log("ID do locatário cadastrado:", id_locatario);
+
+    if (tipo === "aluno") {
+      console.log("ola app");
+      await alunoController.cadastrarAluno({ id_locatario, ra });
+    }
     res.status(201).send("Locatário cadastrado com sucesso.");
   } catch (error) {
     res.status(400).send("Curso inexistente");
@@ -310,26 +330,6 @@ app.post("/alterarLocatario/:id", async function (req, res) {
     res.status(500).send("Erro ao atualizar locatário.");
   }
 });
-
-app.post("/cadastrarAluno", async (req, res) => {
-  try {
-    // const { id_curso, nome, data_de_nascimento, telefone, ra } = req.body;
-
-    // const novo = new Locatario(id_curso, nome, data_de_nascimento, telefone);
-    // const idLocatario = await locatarioRN.cadastrarLocatario(novo);
-
-    await Pool.query(
-      "INSERT INTO alunos (id_locatario, ra) VALUES ($1, $2)",
-      [idLocatario, ra]
-    );
-
-    res.status(201).send("Aluno cadastrado com sucesso.");
-  } catch (error) {
-    console.error(error);
-    res.status(400).send("Erro ao cadastrar aluno.");
-  }
-});
-
 
 //-------------------------------------------------------------------------
 

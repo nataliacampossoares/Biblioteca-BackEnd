@@ -8,15 +8,13 @@ const cadastrarLocatario = async function (locatario) {
     if (!cursoExiste) {
       throw new Error("Curso informado não existe.");
     }
+    const id_locatario = await locatarioDAO.cadastrarLocatario(locatario);
 
-    await locatarioDAO.cadastrarLocatario(locatario);
-    return;
+    return id_locatario; // E retornamos esse ID
   } catch (error) {
     console.error("Erro na regra de negócio: cadastrarLocatario()", error);
     throw error;
   }
 };
 
-module.exports = {
-  cadastrarLocatario,
-};
+module.exports = { cadastrarLocatario };

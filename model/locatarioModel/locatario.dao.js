@@ -7,8 +7,8 @@ const cadastrarLocatario = async function (locatario) {
     RETURNING id
   `;
   try {
-    await Pool.query(query, locatario.convertToArray())
-    return rows[0].id;;
+    const result = await Pool.query(query, locatario.convertToArray());
+    return result.rows[0].id; 
   } catch (error) {
     console.error("Erro no DAO: cadastrarLocatario()", error);
     throw error;
@@ -40,8 +40,8 @@ const desativarLocatario = async function (id) {
   }
 };
 
-const atualizarLocatario = async function(locatario){
-  console.log(locatario.id_curso)
+const atualizarLocatario = async function (locatario) {
+  console.log(locatario.id_curso);
   try {
     const query = `
       UPDATE locatarios
@@ -52,15 +52,25 @@ const atualizarLocatario = async function(locatario){
       WHERE id = $5
       RETURNING *;
     `;
-    const values = [locatario.id_curso, locatario.nome, locatario.data_de_nascimento, locatario.telefone, locatario.id];
+    const values = [
+      locatario.id_curso,
+      locatario.nome,
+      locatario.data_de_nascimento,
+      locatario.telefone,
+      locatario.id,
+    ];
 
-    const { rows } = await Pool.query(query, values);
-
-    return rows[0]; 
+    const result = await Pool.query(query, locatario.convertToArray());
+    return result.rows[0].id;
   } catch (error) {
-    console.error('Erro na function atualizarLocatario()', error);
+    console.error("Erro na function atualizarLocatario()", error);
     throw error;
   }
-}
+};
 
-module.exports = { cadastrarLocatario, listarLocatarios, desativarLocatario, atualizarLocatario };
+module.exports = {
+  cadastrarLocatario,
+  listarLocatarios,
+  desativarLocatario,
+  atualizarLocatario,
+};
