@@ -10,7 +10,7 @@ const cadastrarLocatario = async function (locatario) {
     }
     const id_locatario = await locatarioDAO.cadastrarLocatario(locatario);
 
-    return id_locatario; // E retornamos esse ID
+    return id_locatario; 
   } catch (error) {
     console.error("Erro na regra de negócio: cadastrarLocatario()", error);
     throw error;
