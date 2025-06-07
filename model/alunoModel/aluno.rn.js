@@ -5,12 +5,12 @@ const cadastrarAluno = async function ({ id_locatario, ra }) {
     const alunoExistente = await alunoDAO.buscarAlunoPorRa(ra);
 
     if (alunoExistente) {
-      throw new Error("Já existe um aluno com este RA.");
+      throw new Error("RA aluno");
     }
 
     await alunoDAO.cadastrarAluno({ id_locatario, ra });
   } catch (error) {
-    throw error;
+    throw error; 
   }
 };
 

@@ -25,7 +25,7 @@ const locatarioController = require("./controller/locatario.controller");
 const Locatario = require("./entidades/locatario");
 const locatarioRN = require("./model/locatarioModel/locatario.rn");
 
-const alunoRN = require("./model/alunoModel/aluno.rn");
+const alunoController = require("./controller/aluno.controller");
 
 const professorController = require("./controller/professor.controller");
 
@@ -285,7 +285,7 @@ app.post("/cadastrarLocatario", async (req, res) => {
     const id_locatario = await locatarioRN.cadastrarLocatario(novo);
 
     if (tipo === "aluno") {
-      await alunoRN.cadastrarAluno({ id_locatario, ra });
+      await alunoController.cadastrarAluno({ id_locatario, ra });
     } else if (tipo === "professor") {
       await professorController.cadastrarProfessor({ id_locatario, ra });
     } else if (tipo === "bibliotecario") {
@@ -298,7 +298,11 @@ app.post("/cadastrarLocatario", async (req, res) => {
 
     res.status(201).send("Locatário cadastrado com sucesso.");
   } catch (error) {
-    if (error.message === "Já existe um aluno com este RA.") {
+    if (error.message === "RA aluno") {
+      return res.status(400).send("RA já cadastrado");
+    }
+
+    if (error.message === "RA professor") {
       return res.status(400).send("RA já cadastrado");
     }
 

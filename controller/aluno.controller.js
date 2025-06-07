@@ -1,11 +1,11 @@
-const alunoDAO = require("../model/alunoModel/aluno.dao");
+const alunoRN = require("../model/alunoModel/aluno.rn");
 
 const cadastrarAluno = async function ({ id_locatario, ra }) {
   try {
-    await alunoDAO.cadastrarAluno({ id_locatario, ra });
-    return;
+    await alunoRN.cadastrarAluno({ id_locatario, ra });
   } catch (error) {
-    console.log("Erro no controller: adicionarAluno()", error);
+    console.error("Erro no controller: cadastrarAluno()", error);
+    throw error;  
   }
 };
 
