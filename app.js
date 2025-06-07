@@ -26,7 +26,10 @@ const Locatario = require("./entidades/locatario");
 const locatarioRN = require("./model/locatarioModel/locatario.rn");
 
 const alunoController = require("./controller/aluno.controller");
-const Aluno = require("./entidades/aluno");
+
+const professorController = require("./controller/professor.controller");
+
+const bibliotecarioController = require("./controller/bibliotecario.controller");
 
 //LIVROS------------------------------------------------------------------
 
@@ -266,7 +269,6 @@ app.post("/alterarCategoria/:id", async function (req, res) {
 //LOCATARIO ------------------------------------------------------------------------------
 
 app.post("/cadastrarLocatario", async (req, res) => {
-  console.log("ola app");
   try {
     const {
       id_curso,
@@ -281,11 +283,12 @@ app.post("/cadastrarLocatario", async (req, res) => {
     const novo = new Locatario(id_curso, nome, data_de_nascimento, telefone);
     const id_locatario = await locatarioRN.cadastrarLocatario(novo);
 
-    console.log("ID do locatário cadastrado:", id_locatario);
-
     if (tipo === "aluno") {
-      console.log("ola app");
       await alunoController.cadastrarAluno({ id_locatario, ra });
+    } else if (tipo === "professor") {
+      await professorController.cadastrarProfessor({ id_locatario, ra });
+    } else if (tipo === "bibliotecario") {
+      await bibliotecarioController.cadastrarBibliotecario({ id_locatario, login, senha });
     }
     res.status(201).send("Locatário cadastrado com sucesso.");
   } catch (error) {

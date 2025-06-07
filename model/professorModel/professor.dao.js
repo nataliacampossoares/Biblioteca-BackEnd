@@ -1,17 +1,17 @@
 const { Pool } = require("../../config/database");
 
-const cadastrarAluno = async function ({ id_locatario, ra }) {
+const cadastrarProfessor = async function ({ id_locatario, ra }) {
   const query = `
-      INSERT INTO alunos (id_locatario, ra)
+      INSERT INTO professores (id_locatario, ra)
       VALUES ($1, $2)
     `;
   try {
     const result = await Pool.query(query, [id_locatario, ra]);
     return result.rows[0];
   } catch (error) {
-    console.error("Erro no DAO: cadastrarAluno()", error);
+    console.error("Erro no DAO: cadastrarProfessor()", error);
     throw error;
   }
 };
 
-module.exports = { cadastrarAluno };
+module.exports = { cadastrarProfessor };
