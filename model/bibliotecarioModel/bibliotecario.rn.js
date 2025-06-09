@@ -3,18 +3,17 @@ const bibliotecarioDAO = require("./bibliotecario.dao");
 
 const cadastrarBibliotecario = async function ({
   id_locatario,
-  email,
   senha,
   imagem,
 }) {
 
   try {
-    const bibliotecarioExistente =
-      await locatarioDAO.buscarBibliotecarioPorEmail(email);
-
-    if (bibliotecarioExistente) {
-      throw new Error("Email bibliotecario");
-    }
+    // const bibliotecarioExistente =
+    //   await locatarioDAO.buscarBibliotecarioPorEmail(email);
+    // console.log(bibliotecarioExistente)
+    // if (bibliotecarioExistente) {
+    //   throw new Error("Email bibliotecario");
+    // }
 
     const id_bibliotecario = await bibliotecarioDAO.cadastrarBibliotecario({
       id_locatario,

@@ -71,11 +71,11 @@ const atualizarLocatario = async function (locatario) {
 
 
 const buscarBibliotecarioPorEmail = async function (email) {
-  const query = `SELECT * FROM locatarios WHERE email = $1`;
-  const values = [email];
+  const query = `SELECT * FROM locatarios WHERE email = '${email}'`;
+  
 
   try {
-    const result = await Pool.query(query, values);
+    const result = await Pool.query(query);
     return result.rows[0];
   } catch (error) {
     console.error("Erro no DAO: buscarBibliotecarioPorEmail()", error);
