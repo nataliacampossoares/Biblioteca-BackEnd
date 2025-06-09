@@ -12,6 +12,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "express-fileupload": "^1.5.1",
     "express-handlebars": "^8.0.3",
     "handlebars": "^4.7.8",
     "md5": "^2.3.0",

@@ -1,9 +1,13 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const fileUpload = require("express-fileupload");
 const port = 3000;
-app.use(express.json());
 app.use(cors());
+app.use(fileUpload());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use("/imagens", express.static("./imagens"));
 
 const livroController = require("./controller/livro.controller");
 const livro = require("./entidades/livro");
@@ -277,10 +281,11 @@ app.post("/cadastrarLocatario", async (req, res) => {
       telefone,
       tipo,
       ra = null,
-      login = null,
+      email = null,
       senha = null,
     } = req.body;
 
+    const imagem = req.files ? req.files.imagem : null;
     const novo = new Locatario(id_curso, nome, data_de_nascimento, telefone);
     const id_locatario = await locatarioRN.cadastrarLocatario(novo);
 
@@ -289,11 +294,15 @@ app.post("/cadastrarLocatario", async (req, res) => {
     } else if (tipo === "professor") {
       await professorController.cadastrarProfessor({ id_locatario, ra });
     } else if (tipo === "bibliotecario") {
-      await bibliotecarioController.cadastrarBibliotecario({
-        id_locatario,
-        login,
-        senha,
-      });
+      console.log("imagem", imagem);
+    
+      // adiciona manualmente os campos esperados no req.body
+      req.body.id_locatario = id_locatario;
+      req.body.email = email;
+      req.body.senha = senha;
+    
+      await bibliotecarioController.cadastrarBibliotecario(req, res);
+      return; // evita enviar a resposta duas vezes
     }
 
     res.status(201).send("Locatário cadastrado com sucesso.");
@@ -306,8 +315,8 @@ app.post("/cadastrarLocatario", async (req, res) => {
       return res.status(400).send("RA já cadastrado");
     }
 
-    if (error.message === "Login bibliotecario") {
-      return res.status(400).send("Login já cadastrado");
+    if (error.message === "Email bibliotecario") {
+      return res.status(400).send("Email já cadastrado");
     }
 
     if (error.message === "Curso informado não existe.") {
@@ -353,6 +362,25 @@ app.post("/alterarLocatario/:id", async function (req, res) {
     res.status(500).send("Erro ao atualizar locatário.");
   }
 });
+
+
+app.post("/teste-upload", (req, res) => {
+  console.log("req.body:", req.body);
+  console.log("req.files:", req.files);
+
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).send("Nenhum arquivo enviado.");
+  }
+
+  // O nome do campo 'imagem' no form-data
+  const imagem = req.files.imagem;
+
+  imagem.mv(`./imagens/${imagem.name}`, (err) => {
+    if (err) return res.status(500).send(err);
+    res.send("Arquivo enviado!");
+  });
+});
+
 
 //-------------------------------------------------------------------------
 

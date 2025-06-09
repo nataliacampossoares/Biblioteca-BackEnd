@@ -1,11 +1,12 @@
 class Bibliotecario {
-    constructor(login, senha) {
-        this.login = login;
+    constructor(email, senha, imagem) {
+        this.email = email;
         this.senha = senha;
+        this.imagem = imagem
     }
 
     convertToArray(){
-        return [this.login, this.senha];
+        return [this.senha, this.imagem, this.email];
     }  
 }
 
