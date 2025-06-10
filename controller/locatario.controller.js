@@ -3,7 +3,7 @@ const locatarioRN = require("../model/locatarioModel/locatario.rn")
 
 const cadastrarLocatario = async function (locatario) {
   try {
-    await locatarioRN.verificarLocatario(locatario)
+    await locatarioRN.verificarCurso(locatario)
     const locatario_id =  await locatarioDAO.cadastrarLocatario(locatario)
     return locatario_id;
   } catch (error) {
@@ -11,7 +11,6 @@ const cadastrarLocatario = async function (locatario) {
     throw error;
   }
 };
-
 
 const listarLocatarios = async function () {
   try {
@@ -44,5 +43,5 @@ module.exports = {
   cadastrarLocatario,
   listarLocatarios,
   desativarLocatario,
-  atualizarLocatario,
+  atualizarLocatario
 };

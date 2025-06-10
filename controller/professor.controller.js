@@ -1,8 +1,10 @@
 const professorRN = require("../model/professorModel/professor.rn");
+const professorDAO = require("../model/professorModel/professor.dao")
 
 const cadastrarProfessor = async function ({ id_locatario, ra }) {
   try {
-    await professorRN.cadastrarProfessor({ id_locatario, ra });
+    await professorRN.cadastrarProfessor({ ra });
+    await professorDAO.cadastrarProfessor({ id_locatario, ra });
   } catch (error) {
     console.error("Erro no controller: cadastrarProfessor()", error);
     throw error;

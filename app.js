@@ -294,13 +294,7 @@ app.post("/cadastrarLocatario", async (req, res) => {
     } else if (tipo === "professor") {
       await professorController.cadastrarProfessor({ id_locatario, ra });
     } else if (tipo === "bibliotecario") {
-     
-      // req.body.id_locatario = id_locatario;
-      // req.body.email = email;
-      // req.body.senha = senha;
-    
-      await bibliotecarioController.cadastrarBibliotecario({id_locatario, senha, imagem});
-      return; 
+      await bibliotecarioController.cadastrarBibliotecario({id_locatario, senha, imagem, email});
     }
 
     res.status(201).send("Locatário cadastrado com sucesso.");

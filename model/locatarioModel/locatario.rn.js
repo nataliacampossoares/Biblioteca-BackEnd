@@ -1,21 +1,31 @@
 const locatarioDAO = require("./locatario.dao");
 const cursoDAO = require("../cursoModel/curso.dao");
 
-const verificarLocatario = async function (locatario) {
+const verificarCurso = async function (locatario) {
   try {
     const cursoExiste = await cursoDAO.buscarCursoPorId(locatario.id_curso);
 
     if (!cursoExiste) {
       throw new Error("Curso informado não existe.");
     }
-    // const id_locatario = await locatarioDAO.cadastrarLocatario(locatario);
-    // return id_locatario; 
   } catch (error) {
-    console.error("Erro na regra de negócio: cadastrarLocatario()", error);
+    console.error("Erro na regra de negócio: verificarLocatario()", error);
     throw error;
   }
-
-
 };
 
-module.exports = { cadastrarLocatario };
+const verificarEmailBibliotecario = async function ({email}) {
+  try {
+    const emailExistente = await locatarioDAO.buscarBibliotecarioPorEmail(email);
+    if (emailExistente) {
+      throw new Error("Email já cadastrado");
+    } else {
+    console.log("email inexisrnte da rpa cadastrar")
+    }
+  } catch (error) {
+    console.error("Erro na regra de negócio: verificarEmailLocatario()", error);
+    throw error;
+  }
+};
+
+module.exports = { verificarCurso, verificarEmailBibliotecario };
