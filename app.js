@@ -44,6 +44,39 @@ app.get("/listarLivros", function (req, res) {
   });
 });
 
+app.post("/cadastrarLivro", async function (req, res) {
+  const {
+    autores,
+    categorias,
+    id_editora,
+    titulo,
+    qtde,
+    edicao,
+    descricao,
+    isbn,
+  } = req.body;
+  const imagem = req.files ? req.files.imagem : null;
+  const livro = new Livro(
+    id_editora,
+    titulo,
+    qtde,
+    edicao,
+    imagem,
+    descricao,
+    isbn
+  );
+  let autoresModels = [];
+  for (let autor of autores) {
+    autoresModels.push(new Autor(autor.nome_autor));
+  }
+  let categoriasModels = [];
+  for (let categoria of categorias) {
+    categoriasModels.push(new Categoria(categoria.nome_categoria));
+  }
+
+  await livroController.cadastrarLivro(livro, autoresModels, categoriasModels);
+});
+
 //AUTORES -------------------------------------------------------------------
 
 app.get("/listarAutores", function (req, res) {
@@ -286,7 +319,13 @@ app.post("/cadastrarLocatario", async (req, res) => {
     } = req.body;
 
     const imagem = req.files ? req.files.imagem : null;
-    const novo = new Locatario(id_curso, nome, data_de_nascimento, telefone, email);
+    const novo = new Locatario(
+      id_curso,
+      nome,
+      data_de_nascimento,
+      telefone,
+      email
+    );
     const id_locatario = await locatarioController.cadastrarLocatario(novo);
 
     if (tipo === "aluno") {
@@ -294,7 +333,12 @@ app.post("/cadastrarLocatario", async (req, res) => {
     } else if (tipo === "professor") {
       await professorController.cadastrarProfessor({ id_locatario, ra });
     } else if (tipo === "bibliotecario") {
-      await bibliotecarioController.cadastrarBibliotecario({id_locatario, senha, imagem, email});
+      await bibliotecarioController.cadastrarBibliotecario({
+        id_locatario,
+        senha,
+        imagem,
+        email,
+      });
     }
 
     res.status(201).send("Locatário cadastrado com sucesso.");

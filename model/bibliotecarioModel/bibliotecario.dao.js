@@ -7,8 +7,6 @@ const cadastrarBibliotecario = async function ({
 }) {
   const extensao_arquivo = imagem?.name?.split(".").pop() || null;
 
-  console.log("DAO recebendo:", { id_locatario, senha, extensao_arquivo });
-
   const query = `
       INSERT INTO bibliotecarios (id_locatario, senha, imagem)
       VALUES ($1, $2, $3)
@@ -18,9 +16,8 @@ const cadastrarBibliotecario = async function ({
     const result = await Pool.query(query, [
       id_locatario,
       senha,
-      extensao_arquivo,
+      extensao_arquivo
     ]);
-    console.log("Resultado query:", result.rows);
     return result.rows[0].id_locatario;
   } catch (error) {
     console.error("Erro no DAO: cadastrarBibliotecario()", error);

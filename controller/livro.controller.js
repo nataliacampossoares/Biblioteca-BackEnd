@@ -1,11 +1,16 @@
 const livroDAO = require("../model/livroModel/livro.dao");
+const autorDAO = require("../model/autorModel/autor.dao");
+const autorRN = require("../model/autorModel/autor.rn");
+const categoriaDAO = require("../model/categoriaModel/categoria.dao");
 
-const adicionarLivro = async function (livro) {
-  try {
-    livroDAO.adicionarLivro(livro);
-    return;
-  } catch (error) {
-    console.log("Erro no controller: adicionarLivro()", error);
+const cadastrarLivro = async function (livro, autores, categorias) {
+  let idLivro = await livroDAO.cadastrarLivro(livro);
+  for (let autor of autores) {
+    let idAutor = autorRN.buscarAutorExistente(autor);
+    if (idAutor === -1) {
+      idAutor = autorDAO.adicionarAutor(autor);
+    }
+    livroDAO.cadastrarAutorEmLivro(idLivro, idAutor)
   }
 };
 
@@ -19,4 +24,4 @@ const listarLivros = async function () {
   }
 };
 
-module.exports = { adicionarLivro, listarLivros };
+module.exports = { cadastrarLivro, listarLivros };

@@ -76,8 +76,6 @@ const buscarBibliotecarioPorEmail = async function (email) {
 
   try {
     const result = await Pool.query(query, values);
-    console.log("ndfsjkkfjsanklf")
-    console.log(result.rows.length)
     if (result.rows.length === 0) {
       return false; 
     } else {

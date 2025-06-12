@@ -1,38 +1,53 @@
 const { Pool } = require("../../config/database");
 
 const listarAutores = async function () {
-  try{
+  try {
     const { rows } = await Pool.query("SELECT * FROM autores");
     return rows;
-  }catch(error){
-    console.error('Erro na function listarAutores()', error);
+  } catch (error) {
+    console.error("Erro na function listarAutores()", error);
     throw error;
-  };
+  }
+};
+
+const buscarPorNome = async function (nome_autor) {
+  try {
+    const { rows } = await Pool.query(
+      "SELECT * FROM autores WHERE nome_autor=$1",
+      [nome_autor]
+    );
+    return rows;
+  } catch (error) {
+    console.error("Erro na function listarAutores()", error);
+    throw error;
+  }
 };
 
 const adicionarAutor = async function (autor) {
   const atributosAutor = autor.convertToArray();
-  const query = "INSERT INTO autores(nome_autor) values ($1)";
-  try{
-     await Pool.query(query, atributosAutor);
-     return;
-  }catch(error){
-    console.error('Erro na function adicionarAutor()', error);
+  const query = "INSERT INTO autores(nome_autor) values ($1) RETURNING id";
+  try {
+    await Pool.query(query, atributosAutor);
+    return;
+  } catch (error) {
+    console.error("Erro na function adicionarAutor()", error);
     throw error;
   }
 };
 
 const removerAutor = async function (id) {
-  try{
-    const { rows } = await Pool.query(`DELETE FROM autores WHERE id = $1`, [id]);
+  try {
+    const { rows } = await Pool.query(`DELETE FROM autores WHERE id = $1`, [
+      id,
+    ]);
     return rows;
-  }catch(error){
-    console.error('Erro na function removerAutor()', error);
+  } catch (error) {
+    console.error("Erro na function removerAutor()", error);
     throw error;
-  };
-}
+  }
+};
 
-const atualizarAutor = async function(autor){
+const atualizarAutor = async function (autor) {
   try {
     const query = `
       UPDATE autores
@@ -46,9 +61,15 @@ const atualizarAutor = async function(autor){
 
     return rows[0]; // retorna o autor atualizado (ou undefined se não achou)
   } catch (error) {
-    console.error('Erro na function atualizarAutor()', error);
+    console.error("Erro na function atualizarAutor()", error);
     throw error;
   }
-}
+};
 
-module.exports = {adicionarAutor, listarAutores, removerAutor, atualizarAutor};
+module.exports = {
+  adicionarAutor,
+  listarAutores,
+  removerAutor,
+  atualizarAutor,
+  buscarPorNome,
+};
