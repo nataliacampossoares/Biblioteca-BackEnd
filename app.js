@@ -7,7 +7,8 @@ app.use(cors());
 app.use(fileUpload());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/imagens", express.static("./imagens"));
+app.use("/imagensBibliotecario", express.static("./imagensBibliotecario"));
+app.use("/imagensLivro", express.static("./imagensLivro"));
 
 const livroController = require("./controller/livro.controller");
 const livro = require("./entidades/livro");
@@ -45,36 +46,66 @@ app.get("/listarLivros", function (req, res) {
 });
 
 app.post("/cadastrarLivro", async function (req, res) {
-  const {
+  try{
+
+    const {
     autores,
-    categorias,
-    id_editora,
-    titulo,
-    qtde,
-    edicao,
-    descricao,
-    isbn,
-  } = req.body;
-  const imagem = req.files ? req.files.imagem : null;
-  const livro = new Livro(
-    id_editora,
-    titulo,
-    qtde,
-    edicao,
-    imagem,
-    descricao,
-    isbn
-  );
-  let autoresModels = [];
-  for (let autor of autores) {
-    autoresModels.push(new Autor(autor.nome_autor));
-  }
-  let categoriasModels = [];
-  for (let categoria of categorias) {
-    categoriasModels.push(new Categoria(categoria.nome_categoria));
+      categorias,
+      id_editora,
+      titulo,
+      qtd_disponivel,
+      edicao,
+      descricao,
+      isbn,
+    } = req.body;
+    const imagem = req.files ? req.files.imagem : null;
+    const livro = new Livro(
+      id_editora,
+      titulo,
+      qtd_disponivel,
+      edicao,
+      null,
+      descricao,
+      isbn
+    );
+  
+    let autoresModels = [];
+    let autoresArray = [];
+    if (typeof autores == "string") {
+      autoresArray = JSON.parse(autores);
+    } else {
+      autoresArray = autores;
+    }
+  
+    for (let autor of autoresArray) {
+      autoresModels.push(new Autor(autor));
+    }
+  
+    let categoriasModels = [];
+    let categoriasArray = [];
+    if (typeof categorias == "string") {
+      categoriasArray = JSON.parse(categorias);
+    } else {
+      categoriasArray = categorias;
+    }
+    
+    for (let categoria of categoriasArray) {
+      categoriasModels.push(new Categoria(categoria));
+    }
+  
+    await livroController.cadastrarLivro(
+      livro,
+      autoresModels,
+      categoriasModels,
+      imagem
+    );
+    res.status(201).send("Livro cadastrado com sucesso.");
+  } catch (error) {
+    console.error("Erro ao cadastrar livro:", error);
+    res.status(500).send("Erro ao cadastrar livro.");
   }
 
-  await livroController.cadastrarLivro(livro, autoresModels, categoriasModels);
+
 });
 
 //AUTORES -------------------------------------------------------------------
@@ -198,11 +229,12 @@ app.get("/listarEditoras", function (req, res) {
   });
 });
 
-app.get("/cadastrarEditora", function (req, res) {
-  res.render("formularioEditoras");
-});
+// app.get("/cadastrarEditora", function (req, res) {
+//   res.render("formularioEditoras");
+// });
 
 app.post("/cadastrarEditora", async function (req, res) {
+  console.log(req.body);
   try {
     const nova_editora = new Editora(req.body.nome_editora);
 

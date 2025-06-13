@@ -22,6 +22,20 @@ CREATE TABLE autores (
     nome_autor VARCHAR(60)
 );
 
+-- EDITORAS
+CREATE TABLE editoras (
+    id SERIAL PRIMARY KEY,
+    nome_editora VARCHAR(20)
+);
+
+-- CATEGORIAS COM HIERARQUIA (categoria pai/filha)
+CREATE TABLE categorias (
+    id_categoria SERIAL PRIMARY KEY,
+    nome_categoria VARCHAR(50) NOT NULL,
+    id_pai INT,
+    FOREIGN KEY (id_pai) REFERENCES categorias (id_categoria)
+);
+
 -- LIVROS
 CREATE TABLE livros (
     id SERIAL PRIMARY KEY,
@@ -30,7 +44,10 @@ CREATE TABLE livros (
     edicao INT NOT NULL,
     caminho_imagens TEXT,
     sinopse TEXT,
-    isbn VARCHAR(13) UNIQUE NOT NULL
+    isbn VARCHAR(13) UNIQUE NOT NULL,
+    isAtivo BOOLEAN DEFAULT true,
+    id_editora INT,
+    FOREIGN KEY(id_editora) REFERENCES editoras(id)
 );
 
 -- RELAÇÃO N:N AUTORES ↔ LIVROS
@@ -40,14 +57,6 @@ CREATE TABLE autor_livro (
     PRIMARY KEY(id_autor, id_livro),
     FOREIGN KEY(id_autor) REFERENCES autores(id),
     FOREIGN KEY(id_livro) REFERENCES livros(id)
-);
-
--- CATEGORIAS COM HIERARQUIA (categoria pai/filha)
-CREATE TABLE categorias (
-    id_categoria SERIAL PRIMARY KEY,
-    nome_categoria VARCHAR(50) NOT NULL,
-    id_pai INT,
-    FOREIGN KEY (id_pai) REFERENCES categorias (id_categoria)
 );
 
 -- RELAÇÃO N:N LIVROS ↔ CATEGORIAS
@@ -72,7 +81,7 @@ CREATE TABLE locatarios (
     nome VARCHAR(50),
     data_de_nascimento DATE,
     telefone VARCHAR(20),
-    isAtivo true,
+    isAtivo BOOLEAN DEFAULT true,
     FOREIGN KEY(id_curso) REFERENCES cursos(id)
 );
 
@@ -113,20 +122,7 @@ CREATE TABLE dividas (
     id_livro INT,
     data_hora_emprestimo TIMESTAMP,
     FOREIGN KEY (id_locatario, id_livro, data_hora_emprestimo) 
-        REFERENCES emprestimos (id_locatario, id_livro, data_hora_emprestimo)
+    REFERENCES emprestimos (id_locatario, id_livro, data_hora_emprestimo)
 );
 
--- EDITORAS
-CREATE TABLE editoras (
-    id SERIAL PRIMARY KEY,
-    nome_editora VARCHAR(20)
-);
 
--- RELAÇÃO N:N LIVROS ↔ EDITORAS
-CREATE TABLE editora_livro (
-    id_editora INT,
-    id_livro INT,
-    PRIMARY KEY (id_editora, id_livro),
-    FOREIGN KEY (id_editora) REFERENCES editoras(id),
-    FOREIGN KEY (id_livro) REFERENCES livros(id)
-);

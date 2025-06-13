@@ -13,12 +13,12 @@ const listarAutores = async function () {
 const buscarPorNome = async function (nome_autor) {
   try {
     const { rows } = await Pool.query(
-      "SELECT * FROM autores WHERE nome_autor=$1",
+      "SELECT * FROM autores WHERE nome_autor = $1",
       [nome_autor]
     );
     return rows;
   } catch (error) {
-    console.error("Erro na function listarAutores()", error);
+    console.error("Erro na function buscarPorNome()", error);
     throw error;
   }
 };
@@ -27,8 +27,8 @@ const adicionarAutor = async function (autor) {
   const atributosAutor = autor.convertToArray();
   const query = "INSERT INTO autores(nome_autor) values ($1) RETURNING id";
   try {
-    await Pool.query(query, atributosAutor);
-    return;
+    const resp = await Pool.query(query, atributosAutor);
+    return resp.rows[0].id;
   } catch (error) {
     console.error("Erro na function adicionarAutor()", error);
     throw error;

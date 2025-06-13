@@ -2,36 +2,46 @@ const locatarioRN = require("../model/locatarioModel/locatario.rn");
 const livroDAO = require("../model/livroModel/livro.dao");
 const path = require("path");
 
-const cadastrarLivro = async function (livro) {
+const cadastrarBibliotecario = async function ({
+  id_locatario,
+  senha,
+  imagem,
+  email,
+}) {
   try {
-    await livroDAO.cadastrarLivro(livro);
+    await locatarioRN.verificarEmailBibliotecario(email);
 
-    if (livro.imagem) {
+    if (imagem) {
       const extensao = imagem.name.split(".").pop();
       const caminho = path.join(
         __dirname,
         "..",
-        "imagensLivro",
-        `${id_livro}.${extensao}`
+        "imagensBibliotecario",
+        `${id_locatario}.${extensao}`
       );
 
+      await bibliotecarioDAO.cadastrarBibliotecario({
+        id_locatario,
+        senha,
+        caminho,
+      });
       imagem.mv(caminho, (err) => {
         if (err) {
           console.error("Erro ao mover a imagem:", err);
           return;
         } else {
-          console.log("livro com imagem");
+          console.log("bibliotecario com imagem");
           return;
         }
       });
     } else {
-      console.log("livro sem imagem");
+      console.log("bibliotecario sem imagem");
       return;
     }
   } catch (error) {
-    console.error("Erro no controller: cadastrarLivro()", error);
+    console.error("Erro no controller: cadastrarBibliotecario()", error);
     return;
   }
 };
 
-module.exports = { cadastrarLivro };
+module.exports = { cadastrarBibliotecario };

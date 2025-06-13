@@ -11,23 +11,24 @@ const listarLivros = async function () {
 };
 
 const cadastrarLivro = async function (livro) {
-  const extensao_arquivo = livro.imagem?.name?.split(".").pop() || null;
-  const atributosLivro = livro.convertToArray();
-  const query =
-    "INSERT INTO livros(titulo, qtd_disponivel, edicao, caminho_imagens, descricao, isbn) values ($1, $2, $3, $4, $5, $6) RETURNING id";
+  const query = `
+    INSERT INTO livros (titulo, qtd_disponivel, edicao, caminho_imagens, sinopse, isbn, id_editora)
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
+    RETURNING id
+  `;
   try {
-    await Pool.query(query, [
+    const result = await Pool.query(query, [
       livro.titulo,
-      livro.qtde_disponivel,
+      Number(livro.qtd_disponivel),
       livro.edicao,
-      extensao_arquivo,
+      livro.caminho_imagens,
       livro.descricao,
       livro.isbn,
+      livro.id_editora,
     ]);
-    let result = await Pool.query(query, atributosLivro);
     return result.rows[0].id;
   } catch (error) {
-    console.error("Erro na function adicionarLivro()", error);
+    console.error("Erro na function cadastrarLivro()", error);
     throw error;
   }
 };
@@ -38,10 +39,28 @@ const cadastrarAutorEmLivro = async function (id_livro, id_autor) {
   try {
     await Pool.query(query, values);
     return;
-  } catch (e) {
-    console.error("Erro na function cadastrarAutorEmLivro", e);
+  } catch (error) {
+    console.error("Erro na function cadastrarAutorEmLivro", error);
     throw error;
   }
 };
 
-module.exports = { cadastrarLivro, listarLivros, cadastrarAutorEmLivro };
+const cadastrarCategoriaEmLivro = async function (id_livro, id_categoria) {
+  const query =
+    "INSERT INTO livro_categoria(id_livro, id_categoria) values ($1, $2)";
+  let values = [id_livro, id_categoria];
+  try {
+    await Pool.query(query, values);
+    return;
+  } catch (error) {
+    console.error("Erro na function cadastrarCategoriaEmLivro", error);
+    throw error;
+  }
+};
+
+module.exports = {
+  cadastrarLivro,
+  listarLivros,
+  cadastrarAutorEmLivro,
+  cadastrarCategoriaEmLivro,
+};
