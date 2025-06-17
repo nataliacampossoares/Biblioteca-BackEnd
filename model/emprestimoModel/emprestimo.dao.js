@@ -31,4 +31,37 @@ const atualizarQuantidadeLivro = async function (id_livro) {
   }
 };
 
-module.exports = { cadastrarEmprestimo, atualizarQuantidadeLivro };
+const registrarDevolucao = async function (id_locatario, id_livro) {
+    const query = `
+      UPDATE emprestimos
+      SET data_hora_devolucao = NOW()
+      WHERE id_locatario = $1 AND id_livro = $2 AND data_hora_devolucao IS NULL
+    `;
+  
+    try {
+      const result = await Pool.query(query, [id_locatario, id_livro]);
+      if (result.rowCount === 0) {
+        throw new Error("livro devolvido");
+      }
+    } catch (error) {
+      console.error("Erro ao registrar devolução:", error);
+      throw error;
+    }
+  };
+  
+  const atualizarQuantidadeLivroDevolucao = async function (id_livro) {
+    const query = `
+      UPDATE livros
+      SET qtd_disponivel = qtd_disponivel + 1
+      WHERE id = $1
+    `;
+  
+    try {
+      await Pool.query(query, [id_livro]);
+    } catch (error) {
+      console.error("Erro ao atualizar quantidade na devolução:", error);
+      throw error;
+    }
+  };
+
+module.exports = { cadastrarEmprestimo, atualizarQuantidadeLivro, registrarDevolucao, atualizarQuantidadeLivroDevolucao };

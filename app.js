@@ -451,11 +451,26 @@ app.post("/cadastrarEmprestimo", async function (req, res) {
     if (error.message === "livro indisponivel") {
       return res.status(400).send("Livro indisponível para empréstimo.");
     }
-    
+
     console.error("Erro ao cadastrar empréstimo:", error);
     res.status(500).send("Erro ao cadastrar empréstimo.");
   }
 });
+
+app.post("/cadastrarDevolucao", async function (req, res) {
+  try {
+    const { id_locatario, id_livro } = req.body;
+
+    await emprestimoController.registrarDevolucao(id_locatario, id_livro);
+    await emprestimoController.atualizarQuantidadeLivroDevolucao(id_livro);
+
+    res.status(200).send("Devolução registrada com sucesso.");
+  } catch (error) {
+    console.error("Erro ao registrar devolução:", error);
+    res.status(500).send("Erro ao registrar devolução.");
+  }
+});
+
 
 //-------------------------------------------------------------------------
 
