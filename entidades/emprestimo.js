@@ -8,7 +8,7 @@ class Emprestimo {
     }
 
     convertToArray(){
-        return [this.id_locatario, this.id_livro, this.data_hora_emprestimo, this.data_hora_devolucao];
+        return [this.id_locatario, this.id_livro, this.data_hora_devolucao];
     }
 }
 

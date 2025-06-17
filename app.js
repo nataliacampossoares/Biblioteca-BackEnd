@@ -35,7 +35,7 @@ const professorController = require("./controller/professor.controller");
 const bibliotecarioController = require("./controller/bibliotecario.controller");
 
 const emprestimoController = require("./controller/emprestimo.controller");
-const Emprestimo = require("./entidades/emprestimo")
+const Emprestimo = require("./entidades/emprestimo");
 
 //LIVROS------------------------------------------------------------------
 
@@ -47,10 +47,9 @@ app.get("/listarLivros", function (req, res) {
 });
 
 app.post("/cadastrarLivro", async function (req, res) {
-  try{
-
+  try {
     const {
-    autores,
+      autores,
       categorias,
       id_editora,
       titulo,
@@ -69,7 +68,7 @@ app.post("/cadastrarLivro", async function (req, res) {
       descricao,
       isbn
     );
-  
+
     let autoresModels = [];
     let autoresArray = [];
     if (typeof autores == "string") {
@@ -77,11 +76,11 @@ app.post("/cadastrarLivro", async function (req, res) {
     } else {
       autoresArray = autores;
     }
-  
+
     for (let autor of autoresArray) {
       autoresModels.push(new Autor(autor));
     }
-  
+
     let categoriasModels = [];
     let categoriasArray = [];
     if (typeof categorias == "string") {
@@ -89,11 +88,11 @@ app.post("/cadastrarLivro", async function (req, res) {
     } else {
       categoriasArray = categorias;
     }
-    
+
     for (let categoria of categoriasArray) {
       categoriasModels.push(new Categoria(categoria));
     }
-  
+
     await livroController.cadastrarLivro(
       livro,
       autoresModels,
@@ -105,8 +104,6 @@ app.post("/cadastrarLivro", async function (req, res) {
     console.error("Erro ao cadastrar livro:", error);
     res.status(500).send("Erro ao cadastrar livro.");
   }
-
-
 });
 
 //AUTORES -------------------------------------------------------------------
@@ -432,24 +429,33 @@ app.post("/alterarLocatario/:id", async function (req, res) {
 });
 
 //EMPRÉSTIMO ----------------------------------------------------------------
-app.post("/cadastrarEmprestimo", async function(req, res){
-  try{
-    const {
+app.post("/cadastrarEmprestimo", async function (req, res) {
+  try {
+    const { id_locatario, id_livro } = req.body;
+
+    const agora = new Date()
+
+    const novo_emprestimo = new Emprestimo(
       id_locatario,
       id_livro,
-      data_hora_emprestimo
-    } = req.body;
+      agora,
+      null
+    );
 
-    const novo_emprestimo = new Emprestimo(id_locatario, id_livro, data_hora_emprestimo, null)
+    await emprestimoController.cadastrarEmprestimo(novo_emprestimo);
 
-    await emprestimoController.cadastrarEmprestimo(novo_emprestimo)
+    await emprestimoController.atualizarQuantidadeLivro(id_livro);
 
     res.status(201).send("Editora cadastrada com sucesso.");
-  } catch(error) {
+  } catch (error) {
+    if (error.message === "livro indisponivel") {
+      return res.status(400).send("Livro indisponível para empréstimo.");
+    }
+    
     console.error("Erro ao cadastrar empréstimo:", error);
     res.status(500).send("Erro ao cadastrar empréstimo.");
   }
-})
+});
 
 //-------------------------------------------------------------------------
 

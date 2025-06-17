@@ -4,4 +4,8 @@ const cadastrarEmprestimo = async function(emprestimo){
     return await emprestimoDAO.cadastrarEmprestimo(emprestimo)
 }
 
-module.exports = {cadastrarEmprestimo}
+const atualizarQuantidadeLivro = async function(id_livro){
+    return await emprestimoDAO.atualizarQuantidadeLivro(id_livro)
+}
+
+module.exports = {cadastrarEmprestimo, atualizarQuantidadeLivro}
