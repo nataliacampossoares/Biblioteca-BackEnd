@@ -82,6 +82,7 @@ CREATE TABLE locatarios (
     data_de_nascimento DATE,
     telefone VARCHAR(20),
     isAtivo BOOLEAN DEFAULT true,
+    email VARCHAR(50),
     FOREIGN KEY(id_curso) REFERENCES cursos(id)
 );
 
@@ -110,6 +111,7 @@ CREATE TABLE emprestimos (
     id_livro INT,
     data_hora_emprestimo TIMESTAMP,
     data_hora_devolucao TIMESTAMP,
+    status BOOLEAN DEFAULT false,
     PRIMARY KEY (id_locatario, id_livro, data_hora_emprestimo),
     FOREIGN KEY (id_locatario) REFERENCES locatarios(id),
     FOREIGN KEY (id_livro) REFERENCES livros(id)

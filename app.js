@@ -11,7 +11,6 @@ app.use("/imagensBibliotecario", express.static("./imagensBibliotecario"));
 app.use("/imagensLivro", express.static("./imagensLivro"));
 
 const livroController = require("./controller/livro.controller");
-const livro = require("./entidades/livro");
 const Livro = require("./entidades/livro");
 
 const autorController = require("./controller/autor.controller");
@@ -28,13 +27,15 @@ const Categoria = require("./entidades/categoria");
 
 const locatarioController = require("./controller/locatario.controller");
 const Locatario = require("./entidades/locatario");
-const locatarioRN = require("./model/locatarioModel/locatario.rn");
 
 const alunoController = require("./controller/aluno.controller");
 
 const professorController = require("./controller/professor.controller");
 
 const bibliotecarioController = require("./controller/bibliotecario.controller");
+
+const emprestimoController = require("./controller/emprestimo.controller");
+const Emprestimo = require("./entidades/emprestimo")
 
 //LIVROS------------------------------------------------------------------
 
@@ -234,7 +235,6 @@ app.get("/listarEditoras", function (req, res) {
 // });
 
 app.post("/cadastrarEditora", async function (req, res) {
-  console.log(req.body);
   try {
     const nova_editora = new Editora(req.body.nome_editora);
 
@@ -430,6 +430,26 @@ app.post("/alterarLocatario/:id", async function (req, res) {
     res.status(500).send("Erro ao atualizar locatário.");
   }
 });
+
+//EMPRÉSTIMO ----------------------------------------------------------------
+app.post("/cadastrarEmprestimo", async function(req, res){
+  try{
+    const {
+      id_locatario,
+      id_livro,
+      data_hora_emprestimo
+    } = req.body;
+
+    const novo_emprestimo = new Emprestimo(id_locatario, id_livro, data_hora_emprestimo, null)
+
+    await emprestimoController.cadastrarEmprestimo(novo_emprestimo)
+
+    res.status(201).send("Editora cadastrada com sucesso.");
+  } catch(error) {
+    console.error("Erro ao cadastrar empréstimo:", error);
+    res.status(500).send("Erro ao cadastrar empréstimo.");
+  }
+})
 
 //-------------------------------------------------------------------------
 
