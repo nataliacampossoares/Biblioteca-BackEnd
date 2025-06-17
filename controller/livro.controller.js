@@ -42,7 +42,7 @@ const cadastrarLivro = async function (livro, autores, categorias, imagem) {
         if (idCategoria === -1) {
           idCategoria = await categoriaDAO.cadastrarCategoria(categoria);
         }
-        console.log(idCategoria)
+        console.log(idCategoria);
         livroDAO.cadastrarCategoriaEmLivro(idLivro, idCategoria);
       }
     } else {
@@ -65,4 +65,37 @@ const listarLivros = async function () {
   }
 };
 
-module.exports = { cadastrarLivro, listarLivros };
+const desativarLivro = async function (id_livro) {
+  try {
+    await livroDAO.desativarLivro(id_livro);
+  } catch (error) {
+    console.log("Erro no controller: listarLivros()", error);
+    throw error;
+  }
+};
+
+const pesquisarPorTitulo = async (titulo) => {
+  return await livroDAO.pesquisarPorTitulo(titulo);
+};
+
+const pesquisarPorAutor = async (autor) => {
+  return await livroDAO.pesquisarPorAutor(autor);
+};
+
+const pesquisarPorCategoria = async (categoria) => {
+  return await livroDAO.pesquisarPorCategoria(categoria);
+};
+
+const pesquisarPorEditora = async (editora) => {
+  return await livroDAO.pesquisarPorEditora(editora);
+};
+
+module.exports = {
+  cadastrarLivro,
+  listarLivros,
+  desativarLivro,
+  pesquisarPorTitulo,
+  pesquisarPorAutor,
+  pesquisarPorCategoria,
+  pesquisarPorEditora,
+};

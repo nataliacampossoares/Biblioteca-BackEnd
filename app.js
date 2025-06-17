@@ -46,6 +46,16 @@ app.get("/listarLivros", function (req, res) {
   });
 });
 
+app.get("/desativarLivro/:id", async function (req, res){
+  try {
+    await livroController.desativarLivro(req.params.id);
+    res.status(200).send("Livro desativado com sucesso.");
+  } catch (error) {
+    console.error("Erro ao desativar livro:", error);
+    res.status(500).send("Erro ao desativar livro.");
+  }
+})
+
 app.post("/cadastrarLivro", async function (req, res) {
   try {
     const {
@@ -106,6 +116,49 @@ app.post("/cadastrarLivro", async function (req, res) {
   }
 });
 
+app.get("/pesquisarPorTitulo/:titulo", async function (req, res) {
+  console.log("oioioi")
+  try {
+    const { titulo } = req.params;
+    console.log("Título recebido:", titulo);
+    const livros = await livroController.pesquisarPorTitulo(titulo);
+    res.json(livros);
+  } catch (err) {
+    res.status(500).send("Erro ao pesquisar por título.");
+  }
+});
+
+app.get("/pesquisarPorAutor/:autor", async function(req, res) {
+  try {
+    const { autor } = req.params;
+    const livros = await livroController.pesquisarPorAutor(autor);
+    res.json(livros);
+  } catch (err) {
+    res.status(500).send("Erro ao pesquisar por autor.");
+  }
+});
+
+app.get("/pesquisarPorCategoria/:categoria", async function(req, res) {
+  try {
+    const { categoria } = req.params;
+    const livros = await livroController.pesquisarPorCategoria(categoria);
+    res.json(livros);
+  } catch (err) {
+    res.status(500).send("Erro ao pesquisar por categoria.");
+  }
+});
+
+app.get("/pesquisarPorEditora/:editora", async function(req, res) {
+  try {
+    const { editora } = req.params;
+    const livros = await livroController.pesquisarPorEditora(editora);
+    res.json(livros);
+  } catch (err) {
+    res.status(500).send("Erro ao pesquisar por editora.");
+  }
+});
+
+
 //AUTORES -------------------------------------------------------------------
 
 app.get("/listarAutores", function (req, res) {
@@ -144,10 +197,6 @@ app.get("/removerAutor/:id", async function (req, res) {
   }
 });
 
-app.get("/alterarAutor/:id", function (req, res) {
-  //nao sei oq vai ter aqui
-});
-
 app.post("/alterarAutor/:id", async function (req, res) {
   const edicao_autor = {
     id: req.params.id,
@@ -170,10 +219,6 @@ app.get("/listarCursos", function (req, res) {
   resultado.then((resp) => {
     return res.send(resp);
   });
-});
-
-app.get("/cadastrarCurso", function (req, res) {
-  res.render("formularioCursos");
 });
 
 app.post("/cadastrarCurso", async function (req, res) {
@@ -226,10 +271,6 @@ app.get("/listarEditoras", function (req, res) {
     return res.send(resp);
   });
 });
-
-// app.get("/cadastrarEditora", function (req, res) {
-//   res.render("formularioEditoras");
-// });
 
 app.post("/cadastrarEditora", async function (req, res) {
   try {
@@ -446,7 +487,7 @@ app.post("/cadastrarEmprestimo", async function (req, res) {
 
     await emprestimoController.atualizarQuantidadeLivro(id_livro);
 
-    res.status(201).send("Editora cadastrada com sucesso.");
+    res.status(201).send("Empréstimo cadastrado com sucesso.");
   } catch (error) {
     if (error.message === "livro indisponivel") {
       return res.status(400).send("Livro indisponível para empréstimo.");
@@ -468,6 +509,17 @@ app.post("/cadastrarDevolucao", async function (req, res) {
   } catch (error) {
     console.error("Erro ao registrar devolução:", error);
     res.status(500).send("Erro ao registrar devolução.");
+  }
+});
+
+app.get("/emprestimos/:id_locatario", async (req, res) => {
+  try {
+    const id_locatario = req.params.id_locatario;
+    const emprestimos = await emprestimoController.buscarEmprestimosPorUsuario(id_locatario);
+    res.json(emprestimos);
+  } catch (error) {
+    console.error("Erro ao buscar empréstimos do usuário:", error);
+    res.status(500).send("Erro ao buscar empréstimos do usuário.");
   }
 });
 

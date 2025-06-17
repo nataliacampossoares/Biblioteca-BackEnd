@@ -32,36 +32,64 @@ const atualizarQuantidadeLivro = async function (id_livro) {
 };
 
 const registrarDevolucao = async function (id_locatario, id_livro) {
-    const query = `
+  const query = `
       UPDATE emprestimos
       SET data_hora_devolucao = NOW()
       WHERE id_locatario = $1 AND id_livro = $2 AND data_hora_devolucao IS NULL
     `;
-  
-    try {
-      const result = await Pool.query(query, [id_locatario, id_livro]);
-      if (result.rowCount === 0) {
-        throw new Error("livro devolvido");
-      }
-    } catch (error) {
-      console.error("Erro ao registrar devolução:", error);
-      throw error;
+
+  try {
+    const result = await Pool.query(query, [id_locatario, id_livro]);
+    if (result.rowCount === 0) {
+      throw new Error("livro devolvido");
     }
-  };
-  
-  const atualizarQuantidadeLivroDevolucao = async function (id_livro) {
-    const query = `
+  } catch (error) {
+    console.error("Erro ao registrar devolução:", error);
+    throw error;
+  }
+};
+
+const atualizarQuantidadeLivroDevolucao = async function (id_livro) {
+  const query = `
       UPDATE livros
       SET qtd_disponivel = qtd_disponivel + 1
       WHERE id = $1
     `;
-  
-    try {
-      await Pool.query(query, [id_livro]);
-    } catch (error) {
-      console.error("Erro ao atualizar quantidade na devolução:", error);
-      throw error;
-    }
-  };
 
-module.exports = { cadastrarEmprestimo, atualizarQuantidadeLivro, registrarDevolucao, atualizarQuantidadeLivroDevolucao };
+  try {
+    await Pool.query(query, [id_livro]);
+  } catch (error) {
+    console.error("Erro ao atualizar quantidade na devolução:", error);
+    throw error;
+  }
+};
+
+const buscarEmprestimosPorUsuario = async function (id_locatario) {
+  const query = `
+      SELECT 
+        e.id_locatario,
+        e.id_livro,
+        e.data_hora_emprestimo,
+        e.data_hora_devolucao,
+        l.titulo
+    FROM emprestimos e
+    JOIN livros l ON e.id_livro = l.id
+    WHERE e.id_locatario = $1;
+    `;
+
+  try {
+    const result = await Pool.query(query, [id_locatario]);
+    return result.rows;
+  } catch (error) {
+    console.error("Erro ao buscar empréstimos por usuário:", error);
+    throw error;
+  }
+};
+
+module.exports = {
+  cadastrarEmprestimo,
+  atualizarQuantidadeLivro,
+  registrarDevolucao,
+  atualizarQuantidadeLivroDevolucao,
+  buscarEmprestimosPorUsuario,
+};

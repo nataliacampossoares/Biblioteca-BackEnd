@@ -16,4 +16,14 @@ const atualizarQuantidadeLivroDevolucao = async function (id_livro) {
   return await emprestimoDAO.atualizarQuantidadeLivroDevolucao(id_livro);
 };
 
-module.exports = { cadastrarEmprestimo, atualizarQuantidadeLivro, registrarDevolucao, atualizarQuantidadeLivroDevolucao };
+const buscarEmprestimosPorUsuario = async function (id_locatario) {
+  return await emprestimoDAO.buscarEmprestimosPorUsuario(id_locatario);
+};
+
+module.exports = {
+  cadastrarEmprestimo,
+  atualizarQuantidadeLivro,
+  registrarDevolucao,
+  atualizarQuantidadeLivroDevolucao,
+  buscarEmprestimosPorUsuario,
+};

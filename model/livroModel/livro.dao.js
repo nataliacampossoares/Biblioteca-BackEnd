@@ -2,10 +2,24 @@ const { Pool } = require("../../config/database");
 
 const listarLivros = async function () {
   try {
-    const { rows } = await Pool.query("SELECT * FROM livros");
+    const { rows } = await Pool.query(
+      "SELECT * FROM livros WHERE isAtivo = true"
+    );
     return rows;
   } catch (error) {
     console.error("Erro na function listarLivros()", error);
+    throw error;
+  }
+};
+
+const desativarLivro = async function (id_livro) {
+  const query = `
+  UPDATE livros SET isAtivo = false WHERE id = $1
+  `;
+  try {
+    await Pool.query(query, [id_livro]);
+  } catch (error) {
+    console.error("Erro na function desativarLivro()", error);
     throw error;
   }
 };
@@ -58,9 +72,60 @@ const cadastrarCategoriaEmLivro = async function (id_livro, id_categoria) {
   }
 };
 
+//PESQUISAS DO LIVRO ------------------------------------------------
+const pesquisarPorTitulo = async function (titulo) {
+  const query = "SELECT * FROM livros WHERE titulo ILIKE $1";
+  const values = [`%${titulo}%`];
+  const result = await Pool.query(query, values);
+  return result.rows;
+};
+
+const pesquisarPorAutor = async function (autor) {
+  const query = `
+    SELECT l.*
+    FROM livros l
+    JOIN autor_livro al ON l.id = al.id_livro
+    JOIN autores a ON al.id_autor = a.id
+    WHERE a.nome_autor ILIKE $1
+  `;
+  const values = [`%${autor}%`];
+  const result = await Pool.query(query, values);
+  return result.rows;
+};
+
+const pesquisarPorCategoria = async function (categoria) {
+  const query = `
+    SELECT l.*
+    FROM livros l
+    JOIN livro_categoria lc ON l.id = lc.id_livro
+    JOIN categorias c ON lc.id_categoria = c.id_categoria
+    WHERE c.nome_categoria ILIKE $1
+  `;
+  const values = [`%${categoria}%`];
+  const result = await Pool.query(query, values);
+  return result.rows;
+};
+
+const pesquisarPorEditora = async function (editora) {
+  const query = `
+    SELECT l.*
+    FROM livros l
+    JOIN editoras e ON l.id_editora = e.id
+    WHERE e.nome_editora ILIKE $1
+  `;
+  const values = [`%${editora}%`];
+  const result = await Pool.query(query, values);
+  return result.rows;
+};
+
 module.exports = {
   cadastrarLivro,
   listarLivros,
+  desativarLivro,
   cadastrarAutorEmLivro,
   cadastrarCategoriaEmLivro,
+  pesquisarPorTitulo,
+  pesquisarPorAutor,
+  pesquisarPorCategoria,
+  pesquisarPorEditora,
 };
