@@ -10,12 +10,13 @@ const listarAutores = async function () {
   }
 };
 
-const buscarPorNome = async function (nome_autor) {
+const buscarPorNome = async function (autor) {
   try {
+    console.log("Buscando autor com nome:", autor.nome);
     const { rows } = await Pool.query(
-      "SELECT * FROM autores WHERE nome_autor = $1",
-      [nome_autor]
+      "SELECT * FROM autores WHERE nome_autor = $1", [autor.nome]
     );
+    console.log("Rows aq",rows)
     return rows;
   } catch (error) {
     console.error("Erro na function buscarPorNome()", error);

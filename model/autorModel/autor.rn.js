@@ -1,7 +1,9 @@
 const autorDAO = require("../autorModel/autor.dao");
 
 async function buscarAutorExistente(autor) {
-  let autores = await autorDAO.buscarPorNome(autor.nome_autor);
+  console.log("AQUI NO RN: ",autor)
+  let autores = await autorDAO.buscarPorNome(autor);
+  console.log(autores)
   if (autores.length === 0) {
     return -1;
   }
