@@ -6,9 +6,25 @@ const cadastrarLocatario = async function (locatario) {
     VALUES ($1, $2, $3, $4, $5)
     RETURNING id
   `;
+
+  const queryBibliotecario = `
+    INSERT INTO locatarios (nome, data_de_nascimento, telefone, email)
+    VALUES ($1, $2, $3, $4)
+    RETURNING id
+  `;
   try {
-    const result = await Pool.query(query, locatario.convertToArray());
-    return result.rows[0].id; 
+    if (!locatario.curso === null) {
+      const result = await Pool.query(query, locatario.convertToArray());
+      return result.rows[0].id;
+    } else {
+      const result = await Pool.query(queryBibliotecario, [
+        locatario.nome,
+        locatario.data_de_nascimento,
+        locatario.telefone,
+        locatario.email,
+      ]);
+      return result.rows[0].id;
+    }
   } catch (error) {
     console.error("Erro no DAO: cadastrarLocatario()", error);
     throw error;
@@ -58,7 +74,7 @@ const atualizarLocatario = async function (locatario) {
       locatario.data_de_nascimento,
       locatario.telefone,
       locatario.email,
-      locatario.id
+      locatario.id,
     ];
 
     const result = await Pool.query(query, values);
@@ -69,7 +85,6 @@ const atualizarLocatario = async function (locatario) {
   }
 };
 
-
 const buscarBibliotecarioPorEmail = async function (email) {
   const query = `SELECT * FROM locatarios WHERE email = $1`;
   const values = [email];
@@ -77,9 +92,9 @@ const buscarBibliotecarioPorEmail = async function (email) {
   try {
     const result = await Pool.query(query, values);
     if (result.rows.length === 0) {
-      return false; 
+      return false;
     } else {
-      return true
+      return true;
     }
   } catch (error) {
     console.error("Erro no DAO: buscarBibliotecarioPorEmail()", error);
@@ -87,45 +102,48 @@ const buscarBibliotecarioPorEmail = async function (email) {
   }
 };
 
-
-const atualizarQuantidadeLivroLocatario = async function(id_locatario){
+const atualizarQuantidadeLivroLocatario = async function (id_locatario) {
   const query = `
     UPDATE locatarios
     SET qtde_livros = qtde_livros + 1
     WHERE id = $1
-  `
+  `;
 
-  try{
-    await Pool.query(query, [id_locatario])
+  try {
+    await Pool.query(query, [id_locatario]);
   } catch (error) {
-    console.log("Erro ao atualizar quantidade de livros do locatário: ", error)
+    console.log("Erro ao atualizar quantidade de livros do locatário: ", error);
   }
-}
+};
 
-const atualizarQuantidadeLivroLocatarioDevolucao = async function(id_locatario){
+const atualizarQuantidadeLivroLocatarioDevolucao = async function (
+  id_locatario
+) {
   const query = `
     UPDATE locatarios
     SET qtde_livros = qtde_livros - 1
     WHERE id = $1
-  `
+  `;
 
-  try{
-    await Pool.query(query, [id_locatario])
+  try {
+    await Pool.query(query, [id_locatario]);
   } catch (error) {
-    console.log("Erro ao atualizar quantidade de livros do locatário: ", error)
+    console.log("Erro ao atualizar quantidade de livros do locatário: ", error);
   }
-}
+};
 
-const verificarQuantidadeLivrosLocatario = async function(id_locatario){
-  const query = `SELECT qtde_livros FROM locatarios WHERE id = $1`
+const verificarQuantidadeLivrosLocatario = async function (id_locatario) {
+  const query = `SELECT qtde_livros FROM locatarios WHERE id = $1`;
 
-  try{
-    const result = await Pool.query(query, [id_locatario])
+  try {
+    const result = await Pool.query(query, [id_locatario]);
     return result.rows[0].id;
   } catch (error) {
-    console.log("Erro na funcçaõ verificarQuantidadeLivrosLocatario no locatario.dao")
+    console.log(
+      "Erro na funcçaõ verificarQuantidadeLivrosLocatario no locatario.dao"
+    );
   }
-}
+};
 
 module.exports = {
   cadastrarLocatario,
@@ -135,5 +153,5 @@ module.exports = {
   buscarBibliotecarioPorEmail,
   atualizarQuantidadeLivroLocatario,
   atualizarQuantidadeLivroLocatarioDevolucao,
-  verificarQuantidadeLivrosLocatario
+  verificarQuantidadeLivrosLocatario,
 };

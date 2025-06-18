@@ -19,9 +19,7 @@ const verificarEmailBibliotecario = async function ({email}) {
     const emailExistente = await locatarioDAO.buscarBibliotecarioPorEmail(email);
     if (emailExistente) {
       throw new Error("Email já cadastrado");
-    } else {
-    console.log("email inexisrnte da rpa cadastrar")
-    }
+    } 
   } catch (error) {
     console.error("Erro na regra de negócio: verificarEmailLocatario()", error);
     throw error;

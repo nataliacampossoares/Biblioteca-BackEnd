@@ -1,10 +1,12 @@
 const locatarioDAO = require("../model/locatarioModel/locatario.dao");
-const locatarioRN = require("../model/locatarioModel/locatario.rn")
+const locatarioRN = require("../model/locatarioModel/locatario.rn");
 
 const cadastrarLocatario = async function (locatario) {
   try {
-    await locatarioRN.verificarCurso(locatario)
-    const locatario_id =  await locatarioDAO.cadastrarLocatario(locatario)
+    if (!locatario.curso === null) {
+      await locatarioRN.verificarCurso(locatario);
+    }
+    const locatario_id = await locatarioDAO.cadastrarLocatario(locatario);
     return locatario_id;
   } catch (error) {
     console.log("Erro no controller: cadastrarCurso()", error);
@@ -43,5 +45,5 @@ module.exports = {
   cadastrarLocatario,
   listarLocatarios,
   desativarLocatario,
-  atualizarLocatario
+  atualizarLocatario,
 };
