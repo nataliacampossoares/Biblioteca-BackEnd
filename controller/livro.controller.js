@@ -7,53 +7,38 @@ const path = require("path");
 
 const cadastrarLivro = async function (livro, autores, categorias, imagem) {
   try {
-    let caminhoImagem = null;
-
     if (imagem) {
-      const extensao = path.extname(imagem.name);
-      const nomeImagem = `${livro.titulo}${extensao}`;
-      const caminho = path.join(__dirname, "..", "imagensLivro", nomeImagem);
-
-      try {
-        await imagem.mv(caminho);
-        caminhoImagem = `/imagensLivro/${nomeImagem}`;
-        console.log("Imagem salva em:", caminhoImagem);
-      } catch (err) {
-        console.error("Erro ao salvar a imagem:", err);
-        throw err;
-      }
-
+      const caminhoImagem = await livroDAO.salvarImagemLivro(imagem, livro.titulo);
       livro.caminho_imagens = caminhoImagem;
-
-      let idLivro = await livroDAO.cadastrarLivro(livro);
-
-      for (let autor of autores) {
-        let idAutor = await autorRN.buscarAutorExistente(autor);
-        if (idAutor === -1) {
-          idAutor = await autorDAO.adicionarAutor(autor);
-        }
-
-        livroDAO.cadastrarAutorEmLivro(idLivro, idAutor);
-      }
-
-      for (let categoria of categorias) {
-        console.log(categoria);
-        let idCategoria = await categoriaRN.buscarCategoriaExistente(categoria);
-        if (idCategoria === -1) {
-          idCategoria = await categoriaDAO.cadastrarCategoria(categoria);
-        }
-        console.log(idCategoria);
-        livroDAO.cadastrarCategoriaEmLivro(idLivro, idCategoria);
-      }
     } else {
-      console.log("livro sem imagem");
-      return;
+      console.log("Livro sem imagem");
     }
+
+    const idLivro = await livroDAO.cadastrarLivro(livro);
+
+    for (let autor of autores) {
+      let idAutor = await autorRN.buscarAutorExistente(autor);
+      if (idAutor === -1) {
+        idAutor = await autorDAO.adicionarAutor(autor);
+      }
+      await livroDAO.cadastrarAutorEmLivro(idLivro, idAutor);
+    }
+
+    for (let categoria of categorias) {
+      let idCategoria = await categoriaRN.buscarCategoriaExistente(categoria);
+      if (idCategoria === -1) {
+        idCategoria = await categoriaDAO.cadastrarCategoria(categoria);
+      }
+      await livroDAO.cadastrarCategoriaEmLivro(idLivro, idCategoria);
+    }
+
+    return idLivro;
   } catch (error) {
     console.error("Erro no controller: cadastrarLivro()", error);
-    return;
+    throw error;
   }
 };
+
 
 const listarLivros = async function () {
   try {
@@ -73,6 +58,49 @@ const desativarLivro = async function (id_livro) {
     throw error;
   }
 };
+
+const atualizarLivro = async function (id_livro, livroAtualizado, autores, categorias, imagem) {
+  try {
+    let caminhoImagem = null;
+    if (imagem) {
+      caminhoImagem = await livroDAO.salvarImagemLivro(imagem, livroAtualizado.titulo);
+      livroAtualizado.caminho_imagens = caminhoImagem;
+    }
+
+    console.log(livroAtualizado.descricao)
+    console.log(livroAtualizado.sinopse)
+
+    await livroDAO.atualizarLivro(id_livro, livroAtualizado, caminhoImagem);
+
+    await livroDAO.removerAutoresDoLivro(id_livro);
+    console.log("Array autores:", autores);
+    for (let autor of autores) {
+      console.log("aiaiaiaiai carrapato nao tem pai")
+      let idAutor = await autorRN.buscarAutorExistente(autor);
+      console.log("ID autor buscado:", idAutor);
+      if (idAutor === -1) {
+        idAutor = await autorDAO.adicionarAutor(autor);
+        console.log("ID autor criado:", idAutor);
+      }
+      await livroDAO.cadastrarAutorEmLivro(id_livro, idAutor);
+    }
+
+    await livroDAO.removerCategoriasDoLivro(id_livro);
+
+    for (let categoria of categorias) {
+      let idCategoria = await categoriaRN.buscarCategoriaExistente(categoria);
+      if (idCategoria === -1) {
+        idCategoria = await categoriaDAO.cadastrarCategoria(categoria);
+      }
+      await livroDAO.cadastrarCategoriaEmLivro(id_livro, idCategoria);
+    }
+
+  } catch (error) {
+    console.error("Erro no controller: atualizarLivro() ", error);
+    throw error;
+  }
+};
+
 
 const pesquisarPorTitulo = async (titulo) => {
   return await livroDAO.pesquisarPorTitulo(titulo);
@@ -98,4 +126,5 @@ module.exports = {
   pesquisarPorAutor,
   pesquisarPorCategoria,
   pesquisarPorEditora,
+  atualizarLivro
 };

@@ -1,4 +1,5 @@
 const { Pool } = require("../../config/database");
+const path = require("path");
 
 const listarLivros = async function () {
   try {
@@ -44,6 +45,58 @@ const cadastrarLivro = async function (livro) {
   } catch (error) {
     console.error("Erro na function cadastrarLivro()", error);
     throw error;
+  }
+};
+
+const atualizarLivro = async function (id_livro, livro, imagem) {
+  const query = `
+    UPDATE livros
+    SET titulo = $1, 
+        qtd_disponivel = $2,
+        edicao = $3, 
+        caminho_imagens = $4,
+        sinopse = $5, 
+        isbn = $6, 
+        id_editora = $7
+    WHERE id = $8
+  `;
+  const values = [
+    livro.titulo,
+    Number(livro.qtd_disponivel),
+    livro.edicao,
+    imagem,
+    livro.descricao,
+    livro.isbn,
+    livro.id_editora,
+    id_livro
+  ];
+  await Pool.query(query, values);
+};
+
+const removerCategoriasDoLivro = async function (id_livro) {
+  const query = "DELETE FROM livro_categoria WHERE id_livro = $1";
+  await Pool.query(query, [id_livro]);
+};
+
+const removerAutoresDoLivro = async function (id_livro) {
+  const query = "DELETE FROM autor_livro WHERE id_livro = $1";
+  await Pool.query(query, [id_livro]);
+};
+
+const salvarImagemLivro = async function (imagem, titulo) {
+  try {
+    const extensao = path.extname(imagem.name);
+    const caminho = path.join(__dirname, "..", "..", "imagensLivro", `${titulo}.${extensao}`);
+
+    await imagem.mv(caminho);
+
+    const caminhoImagem = `/imagensLivro/${titulo}.${extensao}`;
+    console.log("Imagem salva em:", caminhoImagem);
+
+    return caminhoImagem;
+  } catch (err) {
+    console.error("Erro ao salvar imagem no DAO:", err);
+    throw err;
   }
 };
 
@@ -122,10 +175,14 @@ module.exports = {
   cadastrarLivro,
   listarLivros,
   desativarLivro,
+  atualizarLivro,
   cadastrarAutorEmLivro,
   cadastrarCategoriaEmLivro,
   pesquisarPorTitulo,
   pesquisarPorAutor,
   pesquisarPorCategoria,
   pesquisarPorEditora,
+  salvarImagemLivro,
+  removerAutoresDoLivro,
+  removerCategoriasDoLivro,
 };

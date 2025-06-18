@@ -116,6 +116,71 @@ app.post("/cadastrarLivro", async function (req, res) {
   }
 });
 
+app.post("/alterarLivro/:id", async function (req, res) {
+  try {
+    const {
+      autores,
+      categorias,
+      id_editora,
+      titulo,
+      qtd_disponivel,
+      edicao,
+      sinopse,
+      isbn,
+    } = req.body;
+
+    const imagem = req.files ? req.files.imagem : null;
+  
+
+    const livroAtualizado = new Livro(
+      id_editora,
+      titulo,
+      qtd_disponivel,
+      edicao,
+      null,
+      sinopse,
+      isbn
+    );
+
+    let autoresModels = [];
+    let autoresArray = [];
+    if (typeof autores === "string") {
+      autoresArray = JSON.parse(autores);
+    } else {
+      autoresArray = autores;
+    }
+
+    for (let autor of autoresArray) {
+      autoresModels.push(new Autor(autor));
+    }
+
+    let categoriasModels = [];
+    let categoriasArray = [];
+    if (typeof categorias === "string") {
+      categoriasArray = JSON.parse(categorias);
+    } else {
+      categoriasArray = categorias;
+    }
+
+    for (let categoria of categoriasArray) {
+      categoriasModels.push(new Categoria(categoria));
+    }
+
+    await livroController.atualizarLivro(
+      req.params.id,
+      livroAtualizado,
+      autoresModels,
+      categoriasModels,
+      imagem
+    );
+
+    res.status(200).send("Livro atualizado com sucesso.");
+  } catch (error) {
+    console.error("Erro ao atualizar livro:", error);
+    res.status(500).send("Erro ao atualizar livro.");
+  }
+});
+
 app.get("/pesquisarPorTitulo/:titulo", async function (req, res) {
   try {
     const { titulo } = req.params;
