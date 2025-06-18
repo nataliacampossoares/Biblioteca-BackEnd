@@ -87,10 +87,53 @@ const buscarBibliotecarioPorEmail = async function (email) {
   }
 };
 
+
+const atualizarQuantidadeLivroLocatario = async function(id_locatario){
+  const query = `
+    UPDATE locatarios
+    SET qtde_livros = qtde_livros + 1
+    WHERE id = $1
+  `
+
+  try{
+    await Pool.query(query, [id_locatario])
+  } catch (error) {
+    console.log("Erro ao atualizar quantidade de livros do locatário: ", error)
+  }
+}
+
+const atualizarQuantidadeLivroLocatarioDevolucao = async function(id_locatario){
+  const query = `
+    UPDATE locatarios
+    SET qtde_livros = qtde_livros - 1
+    WHERE id = $1
+  `
+
+  try{
+    await Pool.query(query, [id_locatario])
+  } catch (error) {
+    console.log("Erro ao atualizar quantidade de livros do locatário: ", error)
+  }
+}
+
+const verificarQuantidadeLivrosLocatario = async function(id_locatario){
+  const query = `SELECT qtde_livros FROM locatarios WHERE id = $1`
+
+  try{
+    const result = await Pool.query(query, [id_locatario])
+    return result.rows[0].id;
+  } catch (error) {
+    console.log("Erro na funcçaõ verificarQuantidadeLivrosLocatario no locatario.dao")
+  }
+}
+
 module.exports = {
   cadastrarLocatario,
   listarLocatarios,
   desativarLocatario,
   atualizarLocatario,
-  buscarBibliotecarioPorEmail
+  buscarBibliotecarioPorEmail,
+  atualizarQuantidadeLivroLocatario,
+  atualizarQuantidadeLivroLocatarioDevolucao,
+  verificarQuantidadeLivrosLocatario
 };

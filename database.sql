@@ -83,6 +83,7 @@ CREATE TABLE locatarios (
     telefone VARCHAR(20),
     isAtivo BOOLEAN DEFAULT true,
     email VARCHAR(50),
+    qtde_livros INT DEFAULT 0, 
     FOREIGN KEY(id_curso) REFERENCES cursos(id)
 );
 

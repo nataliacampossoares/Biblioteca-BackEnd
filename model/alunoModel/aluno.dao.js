@@ -22,9 +22,22 @@ const buscarAlunoPorRa = async function (ra) {
     const result = await Pool.query(query, values);
     return result.rows[0];
   } catch (error) {
-    console.error("Erro no DAO: buscarAlunoPorRa()", error);
+    console.error("Erro no DAO: buscarAlunoPorRa()" , error);
     throw error;
   }
 };
 
-module.exports = { cadastrarAluno, buscarAlunoPorRa };
+const buscarAlunoPorId = async function(id_locatario){
+  const query = `SELECT * FROM alunos WHERE id_locatario = $1`
+  const values = [id_locatario]
+
+  try {
+    const result = await Pool.query(query, values);
+    return result.rows[0];
+  } catch (error) {
+    console.log("Erro no DAO: buscarAlunoPorId" , error)
+    throw error
+  }
+}
+
+module.exports = { cadastrarAluno, buscarAlunoPorRa, buscarAlunoPorId };

@@ -27,4 +27,17 @@ const buscarProfessorPorRa = async function (ra) {
   }
 };
 
-module.exports = { cadastrarProfessor, buscarProfessorPorRa };
+const buscarProfessorPorId = async function(id_locatario){
+  const query = `SELECT * FROM professores WHERE id_locatario = $1`
+  const values = [id_locatario]
+
+  try {
+    const result = await Pool.query(query, values);
+    return result.rows[0];
+  } catch (error) {
+    console.log("Erro no DAO: buscarProfessorPorId" , error)
+    throw error
+  }
+}
+
+module.exports = { cadastrarProfessor, buscarProfessorPorRa, buscarProfessorPorId };

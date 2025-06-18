@@ -41,7 +41,7 @@ const registrarDevolucao = async function (id_locatario, id_livro) {
   try {
     const result = await Pool.query(query, [id_locatario, id_livro]);
     if (result.rowCount === 0) {
-      throw new Error("livro devolvido");
+      throw new Error("livro no banco");
     }
   } catch (error) {
     console.error("Erro ao registrar devolução:", error);
