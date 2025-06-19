@@ -85,6 +85,23 @@ const atualizarLocatario = async function (locatario) {
   }
 };
 
+const buscarLocatarioPorId = async function (id) {
+  const query = `SELECT * FROM locatarios WHERE id = $1`;
+  const values = [id];
+
+  try {
+    const result = await Pool.query(query, values);
+    if (result.rows.length === 0) {
+      return; 
+    }
+    return result.rows[0];
+  } catch (error) {
+    console.error("Erro no DAO: buscarPorId()", error);
+    throw error;
+  }
+};
+
+
 const buscarBibliotecarioPorEmail = async function (email) {
   const query = `SELECT * FROM locatarios WHERE email = $1`;
   const values = [email];
@@ -154,4 +171,5 @@ module.exports = {
   atualizarQuantidadeLivroLocatario,
   atualizarQuantidadeLivroLocatarioDevolucao,
   verificarQuantidadeLivrosLocatario,
+  buscarLocatarioPorId
 };

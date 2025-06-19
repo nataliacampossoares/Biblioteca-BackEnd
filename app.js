@@ -9,6 +9,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/imagensBibliotecario", express.static("./imagensBibliotecario"));
 app.use("/imagensLivro", express.static("./imagensLivro"));
+const email = require("./config/email");
 
 const livroController = require("./controller/livro.controller");
 const Livro = require("./entidades/livro");
@@ -130,7 +131,6 @@ app.post("/alterarLivro/:id", async function (req, res) {
     } = req.body;
 
     const imagem = req.files ? req.files.imagem : null;
-  
 
     const livroAtualizado = new Livro(
       id_editora,
@@ -541,9 +541,7 @@ app.post("/cadastrarEmprestimo", async function (req, res) {
 
     const novo_emprestimo = new Emprestimo(id_locatario, id_livro, agora, null);
 
-    await emprestimoController.cadastrarEmprestimo(novo_emprestimo);
-
-    await emprestimoController.atualizarQuantidadeLivro(id_livro, id_locatario);
+    await emprestimoController.processarEmprestimo(novo_emprestimo);
 
     res.status(201).send("Empréstimo cadastrado com sucesso.");
   } catch (error) {
@@ -559,9 +557,15 @@ app.post("/cadastrarEmprestimo", async function (req, res) {
 app.post("/cadastrarDevolucao", async function (req, res) {
   try {
     const { id_locatario, id_livro } = req.body;
+    const data_hora_devolucao = new Date(); 
 
-    await emprestimoController.registrarDevolucao(id_locatario, id_livro);
-    await emprestimoController.atualizarQuantidadeLivroDevolucao(id_livro);
+    const devolucao = {
+      id_locatario,
+      id_livro,
+      data_hora_devolucao,
+    };
+
+    await emprestimoController.processarDevolucao(devolucao);
 
     res.status(200).send("Devolução registrada com sucesso.");
   } catch (error) {

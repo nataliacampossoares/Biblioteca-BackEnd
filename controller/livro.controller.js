@@ -70,10 +70,7 @@ const atualizarLivro = async function (id_livro, livroAtualizado, autores, categ
     await livroDAO.atualizarLivro(id_livro, livroAtualizado, caminhoImagem);
 
     await livroDAO.removerAutoresDoLivro(id_livro);
-    console.log("Array autores:", autores);
     for (let autor of autores) {
-      console.log("aiaiaiaiai carrapato nao tem pai")
-      console.log(autor)
       let idAutor = await autorRN.buscarAutorExistente(autor);
       console.log("ID autor buscado:", idAutor);
       if (idAutor === -1) {

@@ -125,6 +125,22 @@ const cadastrarCategoriaEmLivro = async function (id_livro, id_categoria) {
   }
 };
 
+const buscarLivroPorId = async function(id_livro){
+  const query = `SELECT * FROM livros WHERE id = $1`;
+  const values = [id_livro];
+
+  try {
+    const result = await Pool.query(query, values);
+    if (result.rows.length === 0) {
+      return; 
+    }
+    return result.rows[0];
+  } catch (error) {
+    console.error("Erro no DAO: buscarLivroPorId()", error);
+    throw error;
+  }
+}
+
 //PESQUISAS DO LIVRO ------------------------------------------------
 const pesquisarPorTitulo = async function (titulo) {
   const query = "SELECT * FROM livros WHERE titulo ILIKE $1";
@@ -185,4 +201,5 @@ module.exports = {
   salvarImagemLivro,
   removerAutoresDoLivro,
   removerCategoriasDoLivro,
+  buscarLivroPorId
 };

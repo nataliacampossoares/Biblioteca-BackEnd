@@ -31,7 +31,7 @@ const atualizarQuantidadeLivro = async function (id_livro) {
   }
 };
 
-const registrarDevolucao = async function (id_locatario, id_livro) {
+const registrarDevolucao = async function (emprestimo) {
   const query = `
       UPDATE emprestimos
       SET data_hora_devolucao = NOW()
@@ -39,7 +39,7 @@ const registrarDevolucao = async function (id_locatario, id_livro) {
     `;
 
   try {
-    const result = await Pool.query(query, [id_locatario, id_livro]);
+    const result = await Pool.query(query, [emprestimo.id_locatario, emprestimo.id_livro]);
     if (result.rowCount === 0) {
       throw new Error("livro no banco");
     }
