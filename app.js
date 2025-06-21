@@ -499,6 +499,24 @@ app.post("/cadastrarLocatario", async (req, res) => {
   }
 });
 
+app.post("/loginBibliotecario", async (req, res) => {
+  const { email, senha } = req.body;
+  try {
+    const bibliotecario = await bibliotecarioController.loginBibliotecario(email, senha);
+    console.log("OLAARRR");
+
+
+    if (!bibliotecario) {
+      return res.status(401).send("Email ou senha incorretos");
+    }
+    
+    res.status(200).send("Login bem-sucedido");
+  } catch (error) {
+    console.error("Erro na rota /loginBibliotecario:", error);
+    res.status(500).send("Erro interno no servidor");
+  }
+});
+
 app.get("/listarLocatarios", async function (req, res) {
   try {
     const locatarios = await locatarioController.listarLocatarios();

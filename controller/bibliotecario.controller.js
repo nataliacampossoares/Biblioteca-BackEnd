@@ -2,6 +2,7 @@ const locatarioRN = require("../model/locatarioModel/locatario.rn");
 const livroDAO = require("../model/livroModel/livro.dao");
 const path = require("path");
 const bibliotecarioDAO = require("../model/bibliotecarioModel/bibliotecario.dao")
+const locatarioDAO = require("../model/locatarioModel/locatario.dao")
 
 const cadastrarBibliotecario = async function ({
   id_locatario,
@@ -56,4 +57,42 @@ const cadastrarBibliotecario = async function ({
   }
 };
 
-module.exports = { cadastrarBibliotecario }
+
+const buscarPorIdLocatario = async function (id_locatario) {
+  try {
+    const bibliotecario = await locatarioDAO.buscarLocatarioPorId(id_locatario);
+    return bibliotecario;
+  } catch (error) {
+    console.error("Erro no controller: buscarPorIdLocatario()", error);
+    throw error;
+  }
+};
+
+const loginBibliotecario = async function (email, senha) {
+  
+  console.log("OLAARR")
+  console.log(email)
+
+  try {
+    const bibliotecario = await locatarioDAO.buscarBibliotecarioLogin(email);
+    console.log("biblitoecario", bibliotecario)
+    if (!bibliotecario) {
+      console.log("OI AMOROOOREESS")
+      console.log("Usuário não encontrado");
+      return
+    }
+
+    if (bibliotecario.senha !== senha) {
+      console.log("Senha incorreta");
+      return
+    }
+
+    console.log("Login realizado com sucesso");
+    return bibliotecario
+  } catch (error) {
+    console.error("Erro no controller: loginBibliotecario()", error);
+    return
+  }
+};
+
+module.exports = { cadastrarBibliotecario, loginBibliotecario, buscarPorIdLocatario }

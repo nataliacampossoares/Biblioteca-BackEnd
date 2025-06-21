@@ -121,6 +121,22 @@ const buscarBibliotecarioPorEmail = async function (email) {
   }
 };
 
+const buscarBibliotecarioLogin = async function (email) {
+  const query = `
+    SELECT b.id_locatario, b.senha, b.imagem, l.email
+    FROM bibliotecarios b
+    JOIN locatarios l ON b.id_locatario = l.id
+    WHERE l.email = $1
+  `;
+  try {
+    const result = await Pool.query(query, [email]);
+    return result.rows[0] || null; 
+  } catch (error) {
+    console.error("Erro no DAO: buscarBibliotecarioPorEmail()", error);
+    throw error;
+  }
+};
+
 const atualizarQuantidadeLivroLocatario = async function (id_locatario) {
   const query = `
     UPDATE locatarios
@@ -173,5 +189,6 @@ module.exports = {
   atualizarQuantidadeLivroLocatario,
   atualizarQuantidadeLivroLocatarioDevolucao,
   verificarQuantidadeLivrosLocatario,
-  buscarLocatarioPorId
+  buscarLocatarioPorId,
+  buscarBibliotecarioLogin
 };
