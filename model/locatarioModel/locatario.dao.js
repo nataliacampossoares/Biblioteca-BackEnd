@@ -123,7 +123,7 @@ const buscarBibliotecarioPorEmail = async function (email) {
 
 const buscarBibliotecarioLogin = async function (email) {
   const query = `
-    SELECT b.id_locatario, b.senha, b.imagem, l.email
+     SELECT b.id_locatario, b.senha, b.imagem, l.nome, l.email
     FROM bibliotecarios b
     JOIN locatarios l ON b.id_locatario = l.id
     WHERE l.email = $1

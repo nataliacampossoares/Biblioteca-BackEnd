@@ -21,4 +21,5 @@ const cadastrarBibliotecario = async function ({ id_locatario, senha, imagem }) 
   }
 };
 
+
 module.exports = { cadastrarBibliotecario };
