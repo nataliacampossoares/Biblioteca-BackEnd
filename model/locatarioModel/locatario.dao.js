@@ -12,11 +12,13 @@ const cadastrarLocatario = async function (locatario) {
     VALUES ($1, $2, $3, $4)
     RETURNING id
   `;
+  console.log("id_curso recebido:", locatario.id_curso);
   try {
     if (locatario.id_curso) {
       const result = await Pool.query(query, locatario.convertToArray());
       return result.rows[0].id;
     } else {
+      console.log("ola estamos no dao p cadastrar bibliotecario")
       const result = await Pool.query(queryBibliotecario, [
         locatario.nome,
         locatario.data_de_nascimento,

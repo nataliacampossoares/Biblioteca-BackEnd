@@ -1,9 +1,9 @@
 const cursoDAO = require("../model/cursoModel/curso.dao");
 
-const cadastrarCurso = async function (curso) {
+const cadastrarCurso = async function (nomeCurso) {
   try {
-    await cursoDAO.cadastrarCurso(curso); 
-    return;
+    const idCurso = await cursoDAO.cadastrarCurso(nomeCurso); 
+    return idCurso; 
   } catch (error) {
     console.log("Erro no controller: cadastrarCurso()", error);
     throw error;

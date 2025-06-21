@@ -1,6 +1,7 @@
 const locatarioRN = require("../model/locatarioModel/locatario.rn");
 const livroDAO = require("../model/livroModel/livro.dao");
 const path = require("path");
+const bibliotecarioDAO = require("../model/bibliotecarioModel/bibliotecario.dao")
 
 const cadastrarBibliotecario = async function ({
   id_locatario,
@@ -9,6 +10,7 @@ const cadastrarBibliotecario = async function ({
   email,
 }) {
   try {
+    console.log("ARE WE HERE? PT 2");
     await locatarioRN.verificarEmailBibliotecario(email);
 
     if (imagem) {
@@ -25,23 +27,35 @@ const cadastrarBibliotecario = async function ({
         senha,
         caminho,
       });
-      imagem.mv(caminho, (err) => {
-        if (err) {
-          console.error("Erro ao mover a imagem:", err);
-          return;
-        } else {
-          console.log("bibliotecario com imagem");
-          return;
-        }
+
+      // Promisificar o mv
+      await new Promise((resolve, reject) => {
+        imagem.mv(caminho, (err) => {
+          if (err) {
+            console.error("Erro ao mover a imagem:", err);
+            reject(err);
+          } else {
+            console.log("bibliotecario com imagem");
+            resolve();
+          }
+        });
       });
+
+      return; // Retorno claro após concluir tudo
     } else {
       console.log("bibliotecario sem imagem");
+      await bibliotecarioDAO.cadastrarBibliotecario({
+        id_locatario,
+        senha,
+        caminho: null,
+      });
       return;
     }
   } catch (error) {
     console.error("Erro no controller: cadastrarBibliotecario()", error);
-    return;
+    throw error; // Melhor lançar o erro para o middleware do express capturar
   }
 };
+
 
 module.exports = { cadastrarBibliotecario };

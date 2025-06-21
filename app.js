@@ -1,4 +1,5 @@
 const express = require("express");
+const { Pool } = require("./config/database");
 const app = express();
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
@@ -430,6 +431,7 @@ app.post("/cadastrarLocatario", async (req, res) => {
     console.log("DADOS RECEBIDOS:", req.body);
     const {
       id_curso = null,
+      novo_curso = null,
       nome,
       data_de_nascimento,
       telefone,
@@ -439,14 +441,27 @@ app.post("/cadastrarLocatario", async (req, res) => {
       senha = null,
     } = req.body;
 
-    const imagem = req.files ? req.files.imagem : null;
+    let idCursoFinal = id_curso;
+
+    const imagem = req.files?.imagem;
+    
+    if (novo_curso) {
+      console.log("AAAAAAAAAAAAAAAAAAAA")
+      console.log(">> Vai cadastrar novo curso:", novo_curso);
+      idCursoFinal = await cursoController.cadastrarCurso(novo_curso);
+      console.log(">> ID do curso cadastrado:", idCursoFinal);
+    }
+
+    console.log(">> ID do curso que será usado no Locatario:", idCursoFinal);
+
     const novo = new Locatario(
-      id_curso,
+      idCursoFinal,
       nome,
       data_de_nascimento,
       telefone,
       email
     );
+
     const id_locatario = await locatarioController.cadastrarLocatario(novo);
 
     if (tipo === "aluno") {
@@ -454,6 +469,7 @@ app.post("/cadastrarLocatario", async (req, res) => {
     } else if (tipo === "professor") {
       await professorController.cadastrarProfessor({ id_locatario, ra });
     } else if (tipo === "bibliotecario") {
+      console.log("ARE WE HERE?")
       await bibliotecarioController.cadastrarBibliotecario({
         id_locatario,
         senha,
@@ -545,7 +561,7 @@ app.post("/cadastrarEmprestimo", async function (req, res) {
 app.post("/cadastrarDevolucao", async function (req, res) {
   try {
     const { id_locatario, id_livro } = req.body;
-    const data_hora_devolucao = new Date(); 
+    const data_hora_devolucao = new Date();
 
     const devolucao = {
       id_locatario,

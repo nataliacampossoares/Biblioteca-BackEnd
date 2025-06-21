@@ -10,12 +10,11 @@ const listarCursos = async function () {
   };
 };
 
-const cadastrarCurso = async function (curso) {
-  const atributosCurso = curso.convertToArray();
-  const query = "INSERT INTO cursos(nome_curso) values ($1)";
+const cadastrarCurso = async function (nomeCurso) {
+  const query = "INSERT INTO cursos(nome_curso) values ($1) RETURNING id";
   try{
-     await Pool.query(query, atributosCurso);
-     return;
+    const resp = await Pool.query(query, [nomeCurso]);
+    return resp.rows[0].id;
   }catch(error){
     console.error('Erro na function cadastrarCurso()', error);
     throw error;
@@ -55,6 +54,8 @@ const atualizarCurso = async function(curso){
 const buscarCursoPorId = async function (id) {
   const query = "SELECT * FROM cursos WHERE id = $1";
   const { rows } = await Pool.query(query, [id]);
+  console.log("OLA BUSCAR CURSO POR ID", id)
+  console.log(rows[0])
   return rows[0];
 };
 
