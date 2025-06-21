@@ -13,7 +13,7 @@ const cadastrarLocatario = async function (locatario) {
     RETURNING id
   `;
   try {
-    if (!locatario.curso === null) {
+    if (locatario.id_curso) {
       const result = await Pool.query(query, locatario.convertToArray());
       return result.rows[0].id;
     } else {

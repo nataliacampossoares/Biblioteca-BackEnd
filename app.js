@@ -284,19 +284,6 @@ app.get("/listarCursos", function (req, res) {
   });
 });
 
-app.post("/cadastrarCurso", async function (req, res) {
-  try {
-    const novo_curso = new Curso(req.body.nome_curso);
-
-    await cursoController.cadastrarCurso(novo_curso);
-
-    res.status(201).send("Curso cadastrado com sucesso.");
-  } catch (error) {
-    console.error("Erro ao cadastrar curso:", error);
-    res.status(500).send("Erro ao cadastrar curso.");
-  }
-});
-
 app.get("/removerCurso/:id", async function (req, res) {
   try {
     await cursoController.removerCurso(req.params.id);
@@ -440,6 +427,7 @@ app.post("/alterarCategoria/:id", async function (req, res) {
 
 app.post("/cadastrarLocatario", async (req, res) => {
   try {
+    console.log("DADOS RECEBIDOS:", req.body);
     const {
       id_curso = null,
       nome,
