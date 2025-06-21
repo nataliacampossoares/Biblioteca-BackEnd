@@ -64,11 +64,16 @@ const listarLocatariosComTipoEcurso = async function () {
   }
 };
 
+const buscarLocatarioPorId = async (id) => {
+  return await locatarioDAO.buscarLocatarioPorId(id);
+}
+
 
 module.exports = {
   cadastrarLocatario,
   listarLocatarios,
   desativarLocatario,
   atualizarLocatario,
-  listarLocatariosComTipoEcurso
+  listarLocatariosComTipoEcurso,
+  buscarLocatarioPorId
 };

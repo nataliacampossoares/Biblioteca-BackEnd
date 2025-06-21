@@ -557,6 +557,17 @@ app.post("/alterarLocatario/:id", async function (req, res) {
   }
 });
 
+app.get("/locatario/:id", async (req, res) => {
+  try {
+    const locatario = await locatarioController.buscarLocatarioPorId(req.params.id);
+    if (!locatario) return res.status(404).send("Locatário não encontrado");
+    res.json(locatario);
+  } catch (err) {
+    console.error("Erro ao buscar locatário:", err);
+    res.status(500).send("Erro ao buscar locatário");
+  }
+});
+
 //EMPRÉSTIMO ----------------------------------------------------------------
 app.post("/cadastrarEmprestimo", async function (req, res) {
   try {
