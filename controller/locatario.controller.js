@@ -7,25 +7,24 @@ const cadastrarLocatario = async function (locatario) {
     console.log(locatario);
     console.log("OIA AQUI VAO CONSOLAR O LOCAARIO.ID_CURSO");
     console.log(locatario.id_curso);
-  
-    let cursoCadastrado = true; 
-  
+
+    let cursoCadastrado = true;
+
     if (locatario.id_curso) {
       cursoCadastrado = await locatarioRN.verificarCurso(locatario.id_curso);
       if (!cursoCadastrado) {
         throw new Error("Curso inválido.");
       }
     }
-  
+
     console.log("CURSO CADASTRADO AQUI Ó");
     console.log(cursoCadastrado);
-  
+
     const locatario_id = await locatarioDAO.cadastrarLocatario(locatario);
     return locatario_id;
   } catch (error) {
     throw new Error("Curso inválido.");
   }
-  
 };
 
 const listarLocatarios = async function () {
@@ -55,9 +54,21 @@ const atualizarLocatario = async function (locatario) {
   }
 };
 
+const listarLocatariosComTipoEcurso = async function () {
+  try {
+    const locatarios = await locatarioDAO.listarLocatariosComTipoEcurso();
+    return locatarios;
+  } catch (error) {
+    console.error("Erro no controller: listarLocatariosComTipoEcurso()", error);
+    throw error;
+  }
+};
+
+
 module.exports = {
   cadastrarLocatario,
   listarLocatarios,
   desativarLocatario,
   atualizarLocatario,
+  listarLocatariosComTipoEcurso
 };

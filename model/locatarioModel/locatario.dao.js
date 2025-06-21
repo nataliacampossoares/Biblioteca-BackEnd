@@ -18,7 +18,7 @@ const cadastrarLocatario = async function (locatario) {
       const result = await Pool.query(query, locatario.convertToArray());
       return result.rows[0].id;
     } else {
-      console.log("ola estamos no dao p cadastrar bibliotecario")
+      console.log("ola estamos no dao p cadastrar bibliotecario");
       const result = await Pool.query(queryBibliotecario, [
         locatario.nome,
         locatario.data_de_nascimento,
@@ -94,7 +94,7 @@ const buscarLocatarioPorId = async function (id) {
   try {
     const result = await Pool.query(query, values);
     if (result.rows.length === 0) {
-      return; 
+      return;
     }
     return result.rows[0];
   } catch (error) {
@@ -102,7 +102,6 @@ const buscarLocatarioPorId = async function (id) {
     throw error;
   }
 };
-
 
 const buscarBibliotecarioPorEmail = async function (email) {
   const query = `SELECT * FROM locatarios WHERE email = $1`;
@@ -130,7 +129,7 @@ const buscarBibliotecarioLogin = async function (email) {
   `;
   try {
     const result = await Pool.query(query, [email]);
-    return result.rows[0] || null; 
+    return result.rows[0] || null;
   } catch (error) {
     console.error("Erro no DAO: buscarBibliotecarioPorEmail()", error);
     throw error;
@@ -180,6 +179,34 @@ const verificarQuantidadeLivrosLocatario = async function (id_locatario) {
   }
 };
 
+const listarLocatariosComTipoEcurso = async function () {
+  const query = `
+   SELECT 
+  l.id,
+  l.nome, 
+  c.nome_curso AS curso,
+  CASE 
+    WHEN p.id_locatario IS NOT NULL THEN 'Professor'
+    WHEN a.id_locatario IS NOT NULL THEN 'Aluno'
+    WHEN b.id_locatario IS NOT NULL THEN 'Bibliotecário'
+    ELSE 'Locatário'
+  END AS cargo
+FROM locatarios l
+LEFT JOIN professores p ON p.id_locatario = l.id
+LEFT JOIN alunos a ON a.id_locatario = l.id
+LEFT JOIN bibliotecarios b ON b.id_locatario = l.id
+LEFT JOIN cursos c ON l.id_curso = c.id;
+  `;
+
+  try {
+    const result = await Pool.query(query);
+    return result.rows;
+  } catch (error) {
+    console.error("Erro no DAO: listarLocatariosComTipoEcurso()", error);
+    throw error;
+  }
+};
+
 module.exports = {
   cadastrarLocatario,
   listarLocatarios,
@@ -190,5 +217,6 @@ module.exports = {
   atualizarQuantidadeLivroLocatarioDevolucao,
   verificarQuantidadeLivrosLocatario,
   buscarLocatarioPorId,
-  buscarBibliotecarioLogin
+  buscarBibliotecarioLogin,
+  listarLocatariosComTipoEcurso,
 };

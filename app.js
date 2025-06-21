@@ -521,7 +521,7 @@ app.post("/loginBibliotecario", async (req, res) => {
 
 app.get("/listarLocatarios", async function (req, res) {
   try {
-    const locatarios = await locatarioController.listarLocatarios();
+    const locatarios = await locatarioController.listarLocatariosComTipoEcurso();
     res.status(200).json(locatarios);
   } catch (error) {
     console.error("Erro ao listar locatários:", error);
