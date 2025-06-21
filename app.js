@@ -429,6 +429,7 @@ app.post("/alterarCategoria/:id", async function (req, res) {
 app.post("/cadastrarLocatario", async (req, res) => {
   try {
     console.log("DADOS RECEBIDOS:", req.body);
+    console.log("req.files:", req.files);
     const {
       id_curso = null,
       novo_curso = null,
@@ -444,9 +445,9 @@ app.post("/cadastrarLocatario", async (req, res) => {
     let idCursoFinal = id_curso;
 
     const imagem = req.files?.imagem;
-    
+
     if (novo_curso) {
-      console.log("AAAAAAAAAAAAAAAAAAAA")
+      console.log("AAAAAAAAAAAAAAAAAAAA");
       console.log(">> Vai cadastrar novo curso:", novo_curso);
       idCursoFinal = await cursoController.cadastrarCurso(novo_curso);
       console.log(">> ID do curso cadastrado:", idCursoFinal);
@@ -469,7 +470,7 @@ app.post("/cadastrarLocatario", async (req, res) => {
     } else if (tipo === "professor") {
       await professorController.cadastrarProfessor({ id_locatario, ra });
     } else if (tipo === "bibliotecario") {
-      console.log("ARE WE HERE?")
+      console.log("ARE WE HERE?");
       await bibliotecarioController.cadastrarBibliotecario({
         id_locatario,
         senha,

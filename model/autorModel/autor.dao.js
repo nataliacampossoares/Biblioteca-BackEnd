@@ -60,7 +60,7 @@ const atualizarAutor = async function (autor) {
 
     const { rows } = await Pool.query(query, values);
 
-    return rows[0]; // retorna o autor atualizado (ou undefined se não achou)
+    return rows[0]; 
   } catch (error) {
     console.error("Erro na function atualizarAutor()", error);
     throw error;

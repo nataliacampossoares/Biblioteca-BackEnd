@@ -19,16 +19,15 @@ const cadastrarBibliotecario = async function ({
         __dirname,
         "..",
         "imagensBibliotecario",
-        `${id_locatario}.${extensao}`
+        `${email}.${extensao}`
       );
 
       await bibliotecarioDAO.cadastrarBibliotecario({
         id_locatario,
         senha,
-        caminho,
+        imagem: caminho, 
       });
 
-      // Promisificar o mv
       await new Promise((resolve, reject) => {
         imagem.mv(caminho, (err) => {
           if (err) {
@@ -41,21 +40,20 @@ const cadastrarBibliotecario = async function ({
         });
       });
 
-      return; // Retorno claro após concluir tudo
+      return;
     } else {
       console.log("bibliotecario sem imagem");
       await bibliotecarioDAO.cadastrarBibliotecario({
         id_locatario,
         senha,
-        caminho: null,
+        imagem: null,
       });
       return;
     }
   } catch (error) {
     console.error("Erro no controller: cadastrarBibliotecario()", error);
-    throw error; // Melhor lançar o erro para o middleware do express capturar
+    throw error;
   }
 };
 
-
-module.exports = { cadastrarBibliotecario };
+module.exports = { cadastrarBibliotecario }
