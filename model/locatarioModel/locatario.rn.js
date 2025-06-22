@@ -2,8 +2,9 @@ const locatarioDAO = require("./locatario.dao");
 const cursoDAO = require("../cursoModel/curso.dao");
 
 const verificarCurso = async function (locatario) {
+  console.log("oi")
   try {
-    if (!id_curso) {
+    if (!locatario) {
       return null;
     }
     console.log("OLA VERIFICARCURSOO");

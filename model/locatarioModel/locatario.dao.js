@@ -89,17 +89,28 @@ const atualizarLocatario = async function (locatario) {
 
 const buscarLocatarioPorId = async function (id) {
   const query = `SELECT 
-      l.id,
-      l.nome,
-      c.nome_curso AS curso,
-      CASE 
-        WHEN EXISTS (SELECT 1 FROM alunos a WHERE a.id_locatario = l.id) THEN 'Aluno'
-        WHEN EXISTS (SELECT 1 FROM professores p WHERE p.id_locatario = l.id) THEN 'Professor'
-        WHEN EXISTS (SELECT 1 FROM bibliotecarios b WHERE b.id_locatario = l.id) THEN 'Bibliotecário'
-      END AS cargo
-    FROM locatarios l
-    LEFT JOIN cursos c ON l.id_curso = c.id
-    WHERE l.id = $1`;
+  l.id,
+  l.nome,
+  l.email,
+  l.telefone,
+  l.data_de_nascimento,
+  c.nome_curso AS curso,
+  l.id_curso,
+  COALESCE(a.ra, p.ra) AS ra,
+  CASE 
+    WHEN a.id_locatario IS NOT NULL THEN 'Aluno'
+    WHEN p.id_locatario IS NOT NULL THEN 'Professor'
+    WHEN EXISTS (SELECT 1 FROM bibliotecarios b WHERE b.id_locatario = l.id) THEN 'Bibliotecário'
+    ELSE 'Locatário'
+  END AS cargo
+FROM locatarios l
+LEFT JOIN cursos c ON l.id_curso = c.id
+LEFT JOIN alunos a ON a.id_locatario = l.id
+LEFT JOIN professores p ON p.id_locatario = l.id
+WHERE l.id = $1
+
+
+`;
   const values = [id];
 
   try {
