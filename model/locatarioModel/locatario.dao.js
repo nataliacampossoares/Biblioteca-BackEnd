@@ -34,7 +34,7 @@ const cadastrarLocatario = async function (locatario) {
 };
 
 const listarLocatarios = async function () {
-  const query = `SELECT * FROM locatarios`;
+  const query = `SELECT * FROM locatarios WHERE isAtivo = true`;
   try {
     const result = await Pool.query(query);
     return result.rows;
