@@ -206,7 +206,8 @@ FROM locatarios l
 LEFT JOIN professores p ON p.id_locatario = l.id
 LEFT JOIN alunos a ON a.id_locatario = l.id
 LEFT JOIN bibliotecarios b ON b.id_locatario = l.id
-LEFT JOIN cursos c ON l.id_curso = c.id;
+LEFT JOIN cursos c ON l.id_curso = c.id
+WHERE l.isAtivo = true;
   `;
 
   try {

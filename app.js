@@ -519,6 +519,8 @@ app.post("/loginBibliotecario", async (req, res) => {
   }
 });
 
+
+
 app.get("/listarLocatarios", async function (req, res) {
   try {
     const locatarios = await locatarioController.listarLocatariosComTipoEcurso();
