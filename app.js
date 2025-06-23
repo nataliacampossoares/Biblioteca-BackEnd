@@ -41,11 +41,9 @@ const Emprestimo = require("./entidades/emprestimo");
 
 //LIVROS------------------------------------------------------------------
 
-app.get("/listarLivros", function (req, res) {
-  const resultado = livroController.listarLivros();
-  resultado.then((resp) => {
-    return res.send(resp);
-  });
+app.get("/listarLivros", async function (req, res) {
+  const resultado = await livroController.listarLivros();
+  res.json(resultado);
 });
 
 app.get("/desativarLivro/:id", async function (req, res) {
