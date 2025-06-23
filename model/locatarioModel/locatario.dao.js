@@ -94,22 +94,20 @@ const buscarLocatarioPorId = async function (id) {
   l.email,
   l.telefone,
   l.data_de_nascimento,
-  c.nome_curso AS curso,
   l.id_curso,
-  COALESCE(a.ra, p.ra) AS ra,
+  c.nome_curso AS curso,
   CASE 
     WHEN a.id_locatario IS NOT NULL THEN 'Aluno'
     WHEN p.id_locatario IS NOT NULL THEN 'Professor'
-    WHEN EXISTS (SELECT 1 FROM bibliotecarios b WHERE b.id_locatario = l.id) THEN 'Bibliotecário'
-    ELSE 'Locatário'
-  END AS cargo
+    WHEN b.id_locatario IS NOT NULL THEN 'Bibliotecário'
+  END AS cargo,
+  COALESCE(a.ra, p.ra) AS ra
 FROM locatarios l
 LEFT JOIN cursos c ON l.id_curso = c.id
 LEFT JOIN alunos a ON a.id_locatario = l.id
 LEFT JOIN professores p ON p.id_locatario = l.id
+LEFT JOIN bibliotecarios b ON b.id_locatario = l.id
 WHERE l.id = $1
-
-
 `;
   const values = [id];
 

@@ -548,6 +548,7 @@ app.post("/alterarLocatario/:id", async function (req, res) {
     nome: req.body.nome,
     data_de_nascimento: req.body.data_de_nascimento,
     telefone: req.body.telefone,
+    // ra: req.body.ra
   };
 
   try {
