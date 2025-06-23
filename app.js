@@ -43,6 +43,7 @@ const Emprestimo = require("./entidades/emprestimo");
 
 app.get("/listarLivros", async function (req, res) {
   const resultado = await livroController.listarLivros();
+  console.log("Resultado da listagem de livros:", resultado);
   res.json(resultado);
 });
 
@@ -113,6 +114,17 @@ app.post("/cadastrarLivro", async function (req, res) {
   } catch (error) {
     console.error("Erro ao cadastrar livro:", error);
     res.status(500).send("Erro ao cadastrar livro.");
+  }
+});
+
+app.get("/listarLivro/:id", async function (req, res) {
+  try {
+    console.log("ID recebido:", req.params.id);
+    const livro = await livroController.listarLivroPorId(req.params.id);
+    res.json(livro);
+  } catch (error) {
+    console.error("Erro ao listar livro:", error);
+    res.status(500).send("Erro ao listar livro.");
   }
 });
 

@@ -50,6 +50,18 @@ const listarLivros = async function () {
   }
 };
 
+const listarLivroPorId = async function (id_livro) {
+  console.log("ID do livro recebido no controller:", id_livro);
+  try {
+    const livro = await livroDAO.buscarLivroPorId(id_livro);
+
+    return livro;
+  } catch (error) {
+    console.log("Erro no controller: listarLivroPorId()", error);
+    throw error;
+  }
+};
+
 const desativarLivro = async function (id_livro) {
   try {
     await livroDAO.desativarLivro(id_livro);
@@ -121,5 +133,6 @@ module.exports = {
   pesquisarPorAutor,
   pesquisarPorCategoria,
   pesquisarPorEditora,
-  atualizarLivro
+  atualizarLivro,
+  listarLivroPorId
 };

@@ -4,7 +4,13 @@ const path = require("path");
 const listarLivros = async function () {
   try {
     const { rows } = await Pool.query(
-      "SELECT * FROM livros WHERE isAtivo = true"
+      `SELECT l.*, a.nome_autor, c.nome_categoria
+      FROM livros l
+      LEFT JOIN livro_categoria lc ON l.id = lc.id_livro
+      LEFT JOIN categorias c ON lc.id_categoria = c.id_categoria
+      LEFT JOIN autor_livro al ON l.id = al.id_livro    
+      LEFT JOIN autores a ON al.id_autor = a.id
+      WHERE l.isAtivo = true`
     );
     return rows;
   } catch (error) {
@@ -126,10 +132,18 @@ const cadastrarCategoriaEmLivro = async function (id_livro, id_categoria) {
 };
 
 const buscarLivroPorId = async function(id_livro){
-  const query = `SELECT * FROM livros WHERE id = $1`;
+  const query =  `SELECT l.*, a.nome_autor, c.nome_categoria, e.nome_editora
+  FROM livros l
+  LEFT JOIN livro_categoria lc ON l.id = lc.id_livro
+  LEFT JOIN categorias c ON lc.id_categoria = c.id_categoria
+  LEFT JOIN autor_livro al ON l.id = al.id_livro    
+  LEFT JOIN autores a ON al.id_autor = a.id
+  LEFT JOIN editoras e ON l.id_editora = e.id
+  WHERE l.id = $1 AND l.isAtivo = true`;
   const values = [id_livro];
 
   try {
+    console.log("ID do livro recebido no DAO:", id_livro);
     const result = await Pool.query(query, values);
     if (result.rows.length === 0) {
       return; 
