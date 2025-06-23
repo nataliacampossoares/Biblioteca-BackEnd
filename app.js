@@ -519,11 +519,10 @@ app.post("/loginBibliotecario", async (req, res) => {
   }
 });
 
-
-
 app.get("/listarLocatarios", async function (req, res) {
   try {
-    const locatarios = await locatarioController.listarLocatariosComTipoEcurso();
+    const locatarios =
+      await locatarioController.listarLocatariosComTipoEcurso();
     res.status(200).json(locatarios);
   } catch (error) {
     console.error("Erro ao listar locatários:", error);
@@ -542,18 +541,37 @@ app.get("/desativarLocatario/:id", async function (req, res) {
 });
 
 app.post("/alterarLocatario/:id", async function (req, res) {
-  console.log("OLAAAAAAAAARR ALTERAAAR")
-  const locatarioAtualizado = {
-    id: req.params.id,
-    id_curso: req.body.id_curso,
-    nome: req.body.nome,
-    data_de_nascimento: req.body.data_de_nascimento,
-    telefone: req.body.telefone,
-    ra: req.body.ra,
-    email: req.body.email,
-  };
-
+  console.log("OLAAAAAAAAARR ALTERAAAR");
   try {
+    const { id } = req.params;
+    const {
+      id_curso = null,
+      novo_curso = null,
+      nome,
+      data_de_nascimento,
+      telefone,
+      ra = null,
+      email,
+    } = req.body;
+
+    let idCursoFinal = id_curso;
+
+    if (novo_curso) {
+      console.log("Vai cadastrar novo curso na alteração:", novo_curso);
+      idCursoFinal = await cursoController.cadastrarCurso(novo_curso);
+      console.log("ID do curso cadastrado:", idCursoFinal);
+    }
+
+    const locatarioAtualizado = new Locatario(
+      idCursoFinal,
+      nome,
+      data_de_nascimento,
+      telefone,
+      email, 
+      ra
+    );
+    locatarioAtualizado.id = id;
+
     await locatarioController.atualizarLocatario(locatarioAtualizado);
     res.status(200).send("Locatário atualizado com sucesso.");
   } catch (error) {
@@ -564,7 +582,9 @@ app.post("/alterarLocatario/:id", async function (req, res) {
 
 app.get("/locatario/:id", async (req, res) => {
   try {
-    const locatario = await locatarioController.buscarLocatarioPorId(req.params.id);
+    const locatario = await locatarioController.buscarLocatarioPorId(
+      req.params.id
+    );
     if (!locatario) return res.status(404).send("Locatário não encontrado");
     res.json(locatario);
   } catch (err) {
