@@ -542,13 +542,15 @@ app.get("/desativarLocatario/:id", async function (req, res) {
 });
 
 app.post("/alterarLocatario/:id", async function (req, res) {
+  console.log("OLAAAAAAAAARR ALTERAAAR")
   const locatarioAtualizado = {
     id: req.params.id,
     id_curso: req.body.id_curso,
     nome: req.body.nome,
     data_de_nascimento: req.body.data_de_nascimento,
     telefone: req.body.telefone,
-    // ra: req.body.ra
+    ra: req.body.ra,
+    email: req.body.email,
   };
 
   try {

@@ -59,17 +59,33 @@ const desativarLocatario = async function (id) {
 };
 
 const atualizarLocatario = async function (locatario) {
+  const queryLocatario = `
+    UPDATE locatarios
+    SET id_curso = $1,
+    nome = $2,
+    data_de_nascimento = $3,
+    telefone = $4,
+    email = $5
+    WHERE id = $6
+    RETURNING *;
+  `;
+
+  const queryVerificaAluno = `
+  SELECT 1 FROM alunos WHERE id_locatario = $1;
+`;
+
+  const queryVerificaProfessor = `
+SELECT 1 FROM professores WHERE id_locatario = $1;
+`;
+
+  const queryAtualizaRaAluno = `
+    UPDATE alunos SET ra = $1 WHERE id_locatario = $2;
+  `;
+
+  const queryAtualizaRaProfessor = `
+  UPDATE professores SET ra = $1 WHERE id_locatario = $2;
+`;
   try {
-    const query = `
-      UPDATE locatarios
-      SET id_curso = $1,
-      nome = $2,
-      data_de_nascimento = $3,
-      telefone = $4,
-      email = $5
-      WHERE id = $6
-      RETURNING *;
-    `;
     const values = [
       locatario.id_curso,
       locatario.nome,
@@ -79,8 +95,21 @@ const atualizarLocatario = async function (locatario) {
       locatario.id,
     ];
 
-    const result = await Pool.query(query, values);
-    return result.rows[0].id;
+    await Pool.query(queryLocatario, values);
+
+    const resultAluno = await Pool.query(queryVerificaAluno, [locatario.id]);
+    if (resultAluno.rowCount > 0) {
+      await Pool.query(queryAtualizaRaAluno, [locatario.ra, locatario.id]);
+    }
+
+    const resultProfessor = await Pool.query(queryVerificaProfessor, [
+      locatario.id,
+    ]);
+    if (resultProfessor.rowCount > 0) {
+      await Pool.query(queryAtualizaRaProfessor, [locatario.ra, locatario.id]);
+    }
+
+    return;
   } catch (error) {
     console.error("Erro na function atualizarLocatario()", error);
     throw error;
