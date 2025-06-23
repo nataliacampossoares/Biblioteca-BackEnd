@@ -367,15 +367,16 @@ app.post("/alterarEditora/:id", async function (req, res) {
 
 //CATEGORIAS ------------------------------------------------------------------------
 
-app.get("/listarCategorias", function (req, res) {
-  const resultado = categoriaController.listarCategorias();
+app.get("/listarCategorias", async function (req, res) {
+  const resultado = await categoriaController.listarCategorias();
+  res.json(resultado);
+});
+
+app.get("/listarSubcategorias", async function (req, res) {
+  const resultado =await categoriaController.listarSubcategorias(req.params.id);
   resultado.then((resp) => {
     return res.send(resp);
   });
-});
-
-app.get("/cadastrarCategoria", function (req, res) {
-  //
 });
 
 app.post("/cadastrarCategoria", async function (req, res) {
@@ -389,9 +390,11 @@ app.post("/cadastrarCategoria", async function (req, res) {
 
     const nova_categoria = new Categoria(req.body.nome_categoria, idPai);
 
-    await categoriaController.cadastrarCategoria(nova_categoria);
+    const id_nova_categoria = await categoriaController.cadastrarCategoria(nova_categoria);
 
-    res.status(201).send("Categoria cadastrada com sucesso.");
+    console.log(id_nova_categoria)
+
+    res.status(201).json(id_nova_categoria)
   } catch (error) {
     console.error("Erro ao cadastrar categoria:", error);
     res.status(500).send("Erro ao cadastrar categoria.");
@@ -567,7 +570,7 @@ app.post("/alterarLocatario/:id", async function (req, res) {
       nome,
       data_de_nascimento,
       telefone,
-      email, 
+      email,
       ra
     );
     locatarioAtualizado.id = id;

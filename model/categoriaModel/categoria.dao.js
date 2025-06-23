@@ -2,13 +2,24 @@ const { Pool } = require("../../config/database");
 
 const listarCategorias = async function () {
   try {
-    const { rows } = await Pool.query("SELECT * FROM categorias");
+    const { rows } = await Pool.query("SELECT * FROM categorias WHERE id_pai IS NULL");
     return rows;
   } catch (error) {
     console.error("Erro na function listarCategorias()", error);
     throw error;
   }
 };
+
+const listarSubcategorias = async function (id) {
+  try {
+    const { rows } = await Pool.query("SELECT * FROM categorias WHERE id_pai = $1", [id])
+    return rows;
+  } catch (error) {
+    console.error("Erro na function listarSubcategorias()", error);
+    throw error;
+  }
+
+}
 
 const buscarPorCategoria = async function (nome_categoria) {
   try {
@@ -74,5 +85,6 @@ module.exports = {
   listarCategorias,
   removerCategoria,
   atualizarCategoria,
-  buscarPorCategoria
+  buscarPorCategoria,
+  listarSubcategorias
 };

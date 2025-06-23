@@ -2,8 +2,10 @@ const categoriaDAO = require("../model/categoriaModel/categoria.dao");
 
 const cadastrarCategoria = async function (categoria) {
   try {
-    await categoriaDAO.cadastrarCategoria(categoria); 
-    return;
+    const resp = await categoriaDAO.cadastrarCategoria(categoria);
+    console.log("OLAAAAAAAAAAAAAAAAAAAAAAAAAAAA RESPP,ID")
+    console.log(resp)
+    return resp;
   } catch (error) {
     console.log("Erro no controller: cadastrarCategoria()", error);
     throw error;
@@ -20,6 +22,16 @@ const listarCategorias = async function () {
   }
 };
 
+const listarSubcategorias = async function (id) {
+  try {
+    const result = await categoriaDAO.listarSubcategorias(id);
+    return result;
+  } catch (error) {
+    console.log("Erro no controller: listarSubcategorias()", error);
+    throw error;
+  }
+};
+
 const removerCategoria = async function (id_categoria) {
   try {
     await categoriaDAO.removerCategoria(id_categoria);
@@ -28,9 +40,9 @@ const removerCategoria = async function (id_categoria) {
     console.log("Erro no controller: removerCategoria()", error);
     throw error;
   }
-}
+};
 
-const atualizarCategoria = async function(categoria){
+const atualizarCategoria = async function (categoria) {
   try {
     const resposta = await categoriaDAO.atualizarCategoria(categoria);
     return resposta;
@@ -38,6 +50,12 @@ const atualizarCategoria = async function(categoria){
     console.error("Erro no controller: atualizarCategoria()", error);
     throw error;
   }
-}
+};
 
-module.exports = { cadastrarCategoria, listarCategorias, removerCategoria, atualizarCategoria };
+module.exports = {
+  cadastrarCategoria,
+  listarCategorias,
+  removerCategoria,
+  atualizarCategoria,
+  listarSubcategorias,
+};
