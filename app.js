@@ -379,14 +379,15 @@ app.post("/alterarEditora/:id", async function (req, res) {
 
 app.get("/listarCategorias", async function (req, res) {
   const resultado = await categoriaController.listarCategorias();
+  console.log("Resultado da listagem de categorias:", resultado)
   res.json(resultado);
 });
 
-app.get("/listarSubcategorias", async function (req, res) {
-  const resultado =await categoriaController.listarSubcategorias(req.params.id);
-  resultado.then((resp) => {
-    return res.send(resp);
-  });
+app.get("/listarSubcategorias/:id", async function (req, res) {
+  console.log("ID recebido:", req.params.id);
+  const resultado = await categoriaController.listarSubcategorias(req.params.id);
+  console.log("OIIIIIIIIIIIIII", resultado)
+  res.json(resultado);
 });
 
 app.post("/cadastrarCategoria", async function (req, res) {
