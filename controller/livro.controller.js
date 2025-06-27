@@ -108,6 +108,9 @@ const atualizarLivro = async function (id_livro, livroAtualizado, autores, categ
   }
 };
 
+const buscarPorISBN = async (isbn) => {
+  return await livroDAO.buscarLivroPorISBN(isbn);
+};
 
 const pesquisarPorTitulo = async (titulo) => {
   return await livroDAO.pesquisarPorTitulo(titulo);
@@ -134,5 +137,6 @@ module.exports = {
   pesquisarPorCategoria,
   pesquisarPorEditora,
   atualizarLivro,
-  listarLivroPorId
+  listarLivroPorId,
+  buscarPorISBN
 };

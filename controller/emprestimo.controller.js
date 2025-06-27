@@ -28,11 +28,13 @@ const atualizarQuantidadeLivroDevolucao = async function (id_livro) {
 };
 
 const processarEmprestimo = async function (emprestimo) {
+  console.log("ID do livro no empréstimo:", emprestimo.id_livro);
   await cadastrarEmprestimo(emprestimo);
   await atualizarQuantidadeLivro(emprestimo.id_livro, emprestimo.id_locatario);
-
+  
   const locatario = await locatarioDAO.buscarLocatarioPorId(emprestimo.id_locatario);
   const livro = await livroDAO.buscarLivroPorId(emprestimo.id_livro)
+  console.log("Livro encontrado:", livro);
   if (locatario && locatario.email) {
     email(
       locatario.email,

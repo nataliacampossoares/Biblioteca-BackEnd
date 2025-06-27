@@ -665,6 +665,31 @@ app.get("/emprestimos/:id_locatario", async (req, res) => {
   }
 });
 
+app.get("/buscarLivroPorISBN/:isbn", async (req, res) => {
+  console.log("OLAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+  try {
+    const { isbn } = req.params;
+    const livro = await livroController.buscarPorISBN(isbn);
+    if (!livro) return res.status(404).send("Livro não encontrado.");
+    res.json(livro);
+  } catch (err) {
+    res.status(500).send("Erro ao buscar livro.");
+  }
+});
+
+app.get("/buscarLocatario/:id", async (req, res) => {
+  console.log('Id recebido no endpoint buscarLocatario:', req.params.id);
+  try {
+    const { id } = req.params;
+    const locatario = await locatarioController.buscarPorRaOuEmail(id);
+    if (!locatario) return res.status(404).send("Locatário não encontrado.");
+    res.json(locatario);
+  } catch (err) {
+    res.status(500).send("Erro ao buscar locatário.");
+  }
+});
+
+
 //-------------------------------------------------------------------------
 
 app.get("/", (req, res) => {

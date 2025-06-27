@@ -257,6 +257,34 @@ WHERE l.isAtivo = true;
   }
 };
 
+const buscarPorRaOuEmail = async (identificador) => {
+  console.log('buscar emaisl dao')
+  const query = `
+   SELECT l.id
+FROM locatarios l
+WHERE l.email = $1
+
+UNION
+
+SELECT a.id_locatario
+FROM alunos a
+WHERE a.ra = $1
+
+UNION
+
+SELECT p.id_locatario
+FROM professores p
+WHERE p.ra = $1
+LIMIT 1;
+
+  `;
+  const values = [identificador];
+  const result = await Pool.query(query, values);
+  console.log("OIOIOIOIOIOIOIO")
+  console.log("Resultado da busca por RA ou email:", result.rows);
+  return result.rows[0];
+};
+
 module.exports = {
   cadastrarLocatario,
   listarLocatarios,
@@ -269,4 +297,5 @@ module.exports = {
   buscarLocatarioPorId,
   buscarBibliotecarioLogin,
   listarLocatariosComTipoEcurso,
+  buscarPorRaOuEmail
 };
