@@ -47,6 +47,19 @@ const cadastrarLivro = async function (livro) {
       livro.isbn,
       livro.id_editora,
     ]);
+    const livroId = result.rows[0].id;
+     
+    if (livro.id_categoria) {
+      await cadastrarCategoriaEmLivro(livroId, livro.id_categoria);
+    }
+   
+    if (livro.id_subcategoria) {  
+    }
+
+    if (livro.id_autor) {
+      await cadastrarAutorEmLivro(livroId, livro.id_autor);
+    }
+
     return result.rows[0].id;
   } catch (error) {
     console.error("Erro na function cadastrarLivro()", error);
@@ -127,6 +140,18 @@ const cadastrarCategoriaEmLivro = async function (id_livro, id_categoria) {
     return;
   } catch (error) {
     console.error("Erro na function cadastrarCategoriaEmLivro", error);
+    throw error;
+  }
+};
+
+const cadastrarSubcategoriaEmLivro = async function (id_livro, id_subcategoria) {
+  const query = "INSERT INTO livro_subcategoria(id_livro, id_subcategoria) values ($1, $2)";
+  let values = [id_livro, id_subcategoria];
+  try {
+    await Pool.query(query, values);
+    return;
+  } catch (error) {
+    console.error("Erro na function cadastrarSubcategoriaEmLivro", error);
     throw error;
   }
 };
