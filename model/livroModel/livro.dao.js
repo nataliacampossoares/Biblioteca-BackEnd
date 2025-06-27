@@ -226,6 +226,26 @@ const pesquisarPorEditora = async function (editora) {
   return result.rows;
 };
 
+const buscarLivroPorISBN = async function (isbn) {
+  const query = `
+    SELECT *
+    FROM livros
+    WHERE isbn = $1
+  `;
+  const values = [isbn];
+
+  try {
+    const result = await Pool.query(query, values);
+    if (result.rows.length === 0) {
+      return; 
+    }
+    return result.rows[0];
+  } catch (error) {
+    console.error("Erro no DAO: buscarLivroPorISBN()", error);
+    throw error;
+  }
+};    
+
 module.exports = {
   cadastrarLivro,
   listarLivros,
@@ -240,5 +260,6 @@ module.exports = {
   salvarImagemLivro,
   removerAutoresDoLivro,
   removerCategoriasDoLivro,
-  buscarLivroPorId
+  buscarLivroPorId,
+  buscarLivroPorISBN
 };

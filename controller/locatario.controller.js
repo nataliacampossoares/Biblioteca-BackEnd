@@ -68,6 +68,11 @@ const buscarLocatarioPorId = async (id) => {
   return await locatarioDAO.buscarLocatarioPorId(id);
 }
 
+const buscarPorRaOuEmail = async (id) => {
+  console.log("ID recebido no controller:", id);
+  return await locatarioDAO.buscarPorRaOuEmail(id);
+};
+
 
 module.exports = {
   cadastrarLocatario,
@@ -75,5 +80,6 @@ module.exports = {
   desativarLocatario,
   atualizarLocatario,
   listarLocatariosComTipoEcurso,
-  buscarLocatarioPorId
+  buscarLocatarioPorId,
+  buscarPorRaOuEmail
 };
