@@ -64,6 +64,10 @@ const buscarEmprestimosPorUsuario = async function (id_locatario) {
   return await emprestimoDAO.buscarEmprestimosPorUsuario(id_locatario);
 };
 
+const buscarEmprestimosAtuaisPorUsuario = async function (id_locatario) {
+  return await emprestimoDAO.buscarEmprestimosAtuaisPorUsuario(id_locatario);
+};
+
 module.exports = {
   cadastrarEmprestimo,
   atualizarQuantidadeLivro,
@@ -71,5 +75,6 @@ module.exports = {
   atualizarQuantidadeLivroDevolucao,
   buscarEmprestimosPorUsuario,
   processarEmprestimo,
-  processarDevolucao
+  processarDevolucao,
+  buscarEmprestimosAtuaisPorUsuario
 };

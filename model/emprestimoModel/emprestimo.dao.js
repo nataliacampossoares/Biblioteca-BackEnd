@@ -86,10 +86,32 @@ const buscarEmprestimosPorUsuario = async function (id_locatario) {
   }
 };
 
+const buscarEmprestimosAtuaisPorUsuario = async function (id_locatario) {
+  const query = `
+      SELECT 
+        e.id_locatario,
+        e.id_livro,
+        e.data_hora_emprestimo,
+        l.titulo        
+        FROM emprestimos e
+        JOIN livros l ON e.id_livro = l.id
+        WHERE e.id_locatario = $1 AND e.data_hora_devolucao IS NULL;
+    `; 
+
+    try{
+      const result = await Pool.query(query, [id_locatario])
+      return result.rows
+    } catch (error){
+      console.error("Erro ao buscar empréstimos por usuário:", error);
+    throw error;
+    }
+  }
+
 module.exports = {
   cadastrarEmprestimo,
   atualizarQuantidadeLivro,
   registrarDevolucao,
   atualizarQuantidadeLivroDevolucao,
   buscarEmprestimosPorUsuario,
+  buscarEmprestimosAtuaisPorUsuario
 };

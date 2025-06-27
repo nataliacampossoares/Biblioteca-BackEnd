@@ -379,14 +379,16 @@ app.post("/alterarEditora/:id", async function (req, res) {
 
 app.get("/listarCategorias", async function (req, res) {
   const resultado = await categoriaController.listarCategorias();
-  console.log("Resultado da listagem de categorias:", resultado)
+  console.log("Resultado da listagem de categorias:", resultado);
   res.json(resultado);
 });
 
 app.get("/listarSubcategorias/:id", async function (req, res) {
   console.log("ID recebido:", req.params.id);
-  const resultado = await categoriaController.listarSubcategorias(req.params.id);
-  console.log("OIIIIIIIIIIIIII", resultado)
+  const resultado = await categoriaController.listarSubcategorias(
+    req.params.id
+  );
+  console.log("OIIIIIIIIIIIIII", resultado);
   res.json(resultado);
 });
 
@@ -401,11 +403,13 @@ app.post("/cadastrarCategoria", async function (req, res) {
 
     const nova_categoria = new Categoria(req.body.nome_categoria, idPai);
 
-    const id_nova_categoria = await categoriaController.cadastrarCategoria(nova_categoria);
+    const id_nova_categoria = await categoriaController.cadastrarCategoria(
+      nova_categoria
+    );
 
-    console.log(id_nova_categoria)
+    console.log(id_nova_categoria);
 
-    res.status(201).json(id_nova_categoria)
+    res.status(201).json(id_nova_categoria);
   } catch (error) {
     console.error("Erro ao cadastrar categoria:", error);
     res.status(500).send("Erro ao cadastrar categoria.");
@@ -665,8 +669,25 @@ app.get("/emprestimos/:id_locatario", async (req, res) => {
   }
 });
 
+app.get("/emprestimosAtuais/:id_locatario", async (req, res) => {
+  console.log('OOOOOOOOOOOOOOOOOOOOOOOI')
+  try {
+    const id_locatario = req.params.id_locatario;
+    const emprestimos =
+      await emprestimoController.buscarEmprestimosAtuaisPorUsuario(
+        id_locatario
+      );
+      console.log(emprestimos)
+    res.json(emprestimos);
+  } catch (error) {
+    console.error("Erro ao buscar empréstimos atuais do usuário:", error);
+    res.status(500).send("Erro ao buscar empréstimos atuais do usuário.");
+  }
+});
+
+
 app.get("/buscarLivroPorISBN/:isbn", async (req, res) => {
-  console.log("OLAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+  console.log("OLAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
   try {
     const { isbn } = req.params;
     const livro = await livroController.buscarPorISBN(isbn);
@@ -678,7 +699,7 @@ app.get("/buscarLivroPorISBN/:isbn", async (req, res) => {
 });
 
 app.get("/buscarLocatario/:id", async (req, res) => {
-  console.log('Id recebido no endpoint buscarLocatario:', req.params.id);
+  console.log("Id recebido no endpoint buscarLocatario:", req.params.id);
   try {
     const { id } = req.params;
     const locatario = await locatarioController.buscarPorRaOuEmail(id);
@@ -688,7 +709,6 @@ app.get("/buscarLocatario/:id", async (req, res) => {
     res.status(500).send("Erro ao buscar locatário.");
   }
 });
-
 
 //-------------------------------------------------------------------------
 
