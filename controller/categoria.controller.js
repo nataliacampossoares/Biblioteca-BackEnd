@@ -3,8 +3,8 @@ const categoriaDAO = require("../model/categoriaModel/categoria.dao");
 const cadastrarCategoria = async function (categoria) {
   try {
     const resp = await categoriaDAO.cadastrarCategoria(categoria);
-    console.log("OLAAAAAAAAAAAAAAAAAAAAAAAAAAAA RESPP,ID")
-    console.log(resp)
+    console.log("OLAAAAAAAAAAAAAAAAAAAAAAAAAAAA RESPP,ID");
+    console.log(resp);
     return resp;
   } catch (error) {
     console.log("Erro no controller: cadastrarCategoria()", error);

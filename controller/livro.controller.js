@@ -8,7 +8,10 @@ const path = require("path");
 const cadastrarLivro = async function (livro, autores, categorias, imagem) {
   try {
     if (imagem) {
-      const caminhoImagem = await livroDAO.salvarImagemLivro(imagem, livro.titulo);
+      const caminhoImagem = await livroDAO.salvarImagemLivro(
+        imagem,
+        livro.titulo
+      );
       livro.caminho_imagens = caminhoImagem;
     } else {
       console.log("Livro sem imagem");
@@ -38,7 +41,6 @@ const cadastrarLivro = async function (livro, autores, categorias, imagem) {
     throw error;
   }
 };
-
 
 const listarLivros = async function () {
   try {
@@ -71,11 +73,20 @@ const desativarLivro = async function (id_livro) {
   }
 };
 
-const atualizarLivro = async function (id_livro, livroAtualizado, autores, categorias, imagem) {
+const atualizarLivro = async function (
+  id_livro,
+  livroAtualizado,
+  autores,
+  categorias,
+  imagem
+) {
   try {
     let caminhoImagem = null;
     if (imagem) {
-      caminhoImagem = await livroDAO.salvarImagemLivro(imagem, livroAtualizado.titulo);
+      caminhoImagem = await livroDAO.salvarImagemLivro(
+        imagem,
+        livroAtualizado.titulo
+      );
       livroAtualizado.caminho_imagens = caminhoImagem;
     }
 
@@ -101,7 +112,6 @@ const atualizarLivro = async function (id_livro, livroAtualizado, autores, categ
       }
       await livroDAO.cadastrarCategoriaEmLivro(id_livro, idCategoria);
     }
-
   } catch (error) {
     console.error("Erro no controller: atualizarLivro() ", error);
     throw error;
@@ -138,5 +148,5 @@ module.exports = {
   pesquisarPorEditora,
   atualizarLivro,
   listarLivroPorId,
-  buscarPorISBN
+  buscarPorISBN,
 };

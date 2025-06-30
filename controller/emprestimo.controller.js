@@ -1,6 +1,7 @@
 const emprestimoDAO = require("../model/emprestimoModel/emprestimo.dao");
 const emprestimoRN = require("../model/emprestimoModel/emprestimo.rn");
 const locatarioDAO = require("../model/locatarioModel/locatario.dao");
+const locatarioRN = require("../model/locatarioModel/locatario.rn");
 const livroDAO = require("../model/livroModel/livro.dao")
 const email = require("../config/email")
 

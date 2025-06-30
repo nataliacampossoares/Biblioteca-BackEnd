@@ -1,7 +1,9 @@
-const categoriaDAO = require("../categoriaModel/categoria.dao");
+const categoriaDAO = require("./categoria.dao");
 
 async function buscarCategoriaExistente(categoria) {
-  let categorias = await categoriaDAO.buscarPorCategoria(categoria.nome_categoria);
+  let categorias = await categoriaDAO.buscarPorCategoria(
+    categoria.nome_categoria
+  );
   if (categorias.length === 0) {
     return -1;
   }

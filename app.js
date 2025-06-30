@@ -670,7 +670,6 @@ app.get("/emprestimos/:id_locatario", async (req, res) => {
 });
 
 app.get("/emprestimosAtuais/:id_locatario", async (req, res) => {
-  console.log('OOOOOOOOOOOOOOOOOOOOOOOI')
   try {
     const id_locatario = req.params.id_locatario;
     const emprestimos =
