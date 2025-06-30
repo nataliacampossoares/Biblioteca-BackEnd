@@ -65,7 +65,11 @@ const buscarEmprestimosPorUsuario = async function (id_locatario) {
 };
 
 const buscarEmprestimosAtuaisPorUsuario = async function (id_locatario) {
-  return await emprestimoDAO.buscarEmprestimosAtuaisPorUsuario(id_locatario);
+  const emprestimos = await emprestimoDAO.buscarEmprestimosAtuaisPorUsuario(id_locatario);
+  
+  return emprestimos.map((e) =>
+    locatarioRN.verificarSituacaoEmprestimo(e, e.cargo)
+  );
 };
 
 module.exports = {
