@@ -488,7 +488,6 @@ app.post("/cadastrarLocatario", async (req, res) => {
     } else if (tipo === "professor") {
       await professorController.cadastrarProfessor({ id_locatario, ra });
     } else if (tipo === "bibliotecario") {
-      console.log("ARE WE HERE?");
       await bibliotecarioController.cadastrarBibliotecario({
         id_locatario,
         senha,

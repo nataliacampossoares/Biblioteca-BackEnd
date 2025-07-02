@@ -33,15 +33,16 @@ const verificarQuantidadeLivrosLocatario = async function (id_locatario) {
 const verificarSituacaoEmprestimo = function (emprestimo, cargo) {
   const dataEmprestimo = new Date(emprestimo.data_hora_emprestimo);
 
+  console.log("VERIFICAR EMPRESTIMO CARGO", cargo)
+
   let diasPermitidos = 7;
-  if (cargo === "professor") {
+  if (cargo === "Professor") {
     diasPermitidos = 30;
   }
 
   const dataLimite = new Date(dataEmprestimo);
   dataLimite.setDate(dataLimite.getDate() + diasPermitidos);
 
-  let diasAtraso = 0;
   let multa = 0;
   let situacao = "";
 
@@ -50,8 +51,7 @@ const verificarSituacaoEmprestimo = function (emprestimo, cargo) {
 
     if (dataDevolucao > dataLimite) {
       const diffMs = dataDevolucao - dataLimite;
-      diasAtraso = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-      multa = diasAtraso * 1; // 1 real por dia
+      multa = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
       situacao = "Devolvido com atraso";
     } else {
       situacao = "Devolvido no prazo";
@@ -62,7 +62,6 @@ const verificarSituacaoEmprestimo = function (emprestimo, cargo) {
       dataEmprestimo,
       dataDevolucao: new Date(emprestimo.data_hora_devolucao),
       situacao,
-      diasAtraso,
       multa
     };
   }
@@ -72,8 +71,8 @@ const verificarSituacaoEmprestimo = function (emprestimo, cargo) {
 
   if (atrasado) {
     const diffMs = hoje - dataLimite;
-    diasAtraso = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-    multa = diasAtraso * 1;
+    multa = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
   }
 
   situacao = atrasado ? "Atrasado" : "Em posse";
@@ -83,7 +82,7 @@ const verificarSituacaoEmprestimo = function (emprestimo, cargo) {
     dataEmprestimo,
     dataDevolucao: null,
     situacao,
-    diasAtraso,
+    multa,
     multa
   };
 };
