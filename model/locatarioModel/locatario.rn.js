@@ -7,11 +7,8 @@ const verificarCurso = async function (locatario) {
     if (!locatario) {
       return null;
     }
-    console.log("OLA VERIFICARCURSOO");
-    console.log(locatario);
     const cursoExiste = await cursoDAO.buscarCursoPorId(locatario);
-    console.log("CURSO EXISTE AQUI Ó");
-    console.log(cursoExiste);
+    
     if (!cursoExiste) {
       throw new Error("Curso informado não existe.");
     }

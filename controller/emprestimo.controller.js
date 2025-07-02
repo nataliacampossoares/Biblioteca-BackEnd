@@ -62,15 +62,26 @@ const processarDevolucao = async function (devolucao) {
 }
 
 const buscarEmprestimosPorUsuario = async function (id_locatario) {
-  return await emprestimoDAO.buscarEmprestimosPorUsuario(id_locatario);
+  const emprestimos = await emprestimoDAO.buscarEmprestimosPorUsuario(id_locatario);
+  console.log("Emprestimos encontradosSSOSSOSOSO:", emprestimos);
+  const locatario = await locatarioDAO.buscarLocatarioPorId(id_locatario);
+  const cargo = locatario.cargo;
+
+  return emprestimos.map((e) =>
+    emprestimoRN.verificarSituacaoEmprestimo(e, cargo)
+  );
 };
+
 
 const buscarEmprestimosAtuaisPorUsuario = async function (id_locatario) {
   const emprestimos = await emprestimoDAO.buscarEmprestimosAtuaisPorUsuario(id_locatario);
-  
-  return emprestimos.map((e) =>
-    locatarioRN.verificarSituacaoEmprestimo(e, e.cargo)
-  );
+  const locatario = await locatarioDAO.buscarLocatarioPorId(id_locatario);
+  const cargo = locatario.cargo
+
+  return emprestimos.map((e) => {
+    const situacao = emprestimoRN.verificarSituacaoEmprestimo(e, cargo);
+    return situacao;
+  });
 };
 
 module.exports = {

@@ -662,6 +662,7 @@ app.get("/emprestimos/:id_locatario", async (req, res) => {
     const emprestimos = await emprestimoController.buscarEmprestimosPorUsuario(
       id_locatario
     );
+    console.log("Emprestimos encontrados:", emprestimos);
     res.json(emprestimos);
   } catch (error) {
     console.error("Erro ao buscar empréstimos do usuário:", error);
@@ -676,7 +677,6 @@ app.get("/emprestimosAtuais/:id_locatario", async (req, res) => {
       await emprestimoController.buscarEmprestimosAtuaisPorUsuario(
         id_locatario
       );
-      console.log(emprestimos)
     res.json(emprestimos);
   } catch (error) {
     console.error("Erro ao buscar empréstimos atuais do usuário:", error);

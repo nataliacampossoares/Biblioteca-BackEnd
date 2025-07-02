@@ -5,7 +5,9 @@ const locatarioDAO = require("../locatarioModel/locatario.dao");
 const verificarQuantidadeLivrosLocatario = async function (id_locatario) {
   const aluno = await alunoDAO.buscarAlunoPorId(id_locatario);
   const professor = await professorDAO.buscarProfessorPorId(id_locatario);
-  const quantidade = await locatarioDAO.verificarQuantidadeLivrosLocatario(id_locatario);
+  const quantidade = await locatarioDAO.verificarQuantidadeLivrosLocatario(
+    id_locatario
+  );
 
   if (aluno) {
     if (quantidade === 3) {
@@ -21,14 +23,22 @@ const verificarQuantidadeLivrosLocatario = async function (id_locatario) {
     }
   } else {
     if (quantidade === 5) {
-        return false;
+      return false;
     } else {
-        return true;
+      return true;
     }
   }
 };
 
 const verificarSituacaoEmprestimo = function (emprestimo, cargo) {
+  if (emprestimo.data_hora_devolucao) {
+    return {
+      titulo: emprestimo.titulo,
+      dataEmprestimo: emprestimo.data_hora_emprestimo,
+      dataDevolucao: emprestimo.data_hora_devolucao,
+      situacao: "Devolvido",
+    };
+  }
   const dataEmprestimo = new Date(emprestimo.data_hora_emprestimo);
   const hoje = new Date();
 
@@ -37,15 +47,20 @@ const verificarSituacaoEmprestimo = function (emprestimo, cargo) {
     diasPermitidos = 30;
   }
 
-  const dataLimite = new Date(dataEmprestimo);
+  const dataLimite = new Date(emprestimo.data_hora_emprestimo);
   dataLimite.setDate(dataLimite.getDate() + diasPermitidos);
 
   const atrasado = hoje > dataLimite;
 
   return {
     titulo: emprestimo.titulo,
-    situacao: atrasado ? "Atrasado" : "Em dia"
+    dataEmprestimo,
+    dataDevolucao: null,
+    situacao: atrasado ? "Atrasado" : "Em posse",
   };
 };
 
-module.exports = {verificarQuantidadeLivrosLocatario, verificarSituacaoEmprestimo}
+module.exports = {
+  verificarQuantidadeLivrosLocatario,
+  verificarSituacaoEmprestimo,
+};
