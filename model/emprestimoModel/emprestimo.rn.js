@@ -5,7 +5,9 @@ const locatarioDAO = require("../locatarioModel/locatario.dao");
 const verificarQuantidadeLivrosLocatario = async function (id_locatario) {
   const aluno = await alunoDAO.buscarAlunoPorId(id_locatario);
   const professor = await professorDAO.buscarProfessorPorId(id_locatario);
-  const quantidade = await locatarioDAO.verificarQuantidadeLivrosLocatario(id_locatario);
+  const quantidade = await locatarioDAO.verificarQuantidadeLivrosLocatario(
+    id_locatario
+  );
 
   if (aluno) {
     if (quantidade === 3) {
@@ -21,31 +23,72 @@ const verificarQuantidadeLivrosLocatario = async function (id_locatario) {
     }
   } else {
     if (quantidade === 5) {
-        return false;
+      return false;
     } else {
-        return true;
+      return true;
     }
   }
 };
 
 const verificarSituacaoEmprestimo = function (emprestimo, cargo) {
   const dataEmprestimo = new Date(emprestimo.data_hora_emprestimo);
-  const hoje = new Date();
+
+  console.log("VERIFICAR EMPRESTIMO CARGO", cargo)
 
   let diasPermitidos = 7;
-  if (cargo === "professor") {
+  if (cargo === "Professor") {
     diasPermitidos = 30;
   }
 
   const dataLimite = new Date(dataEmprestimo);
   dataLimite.setDate(dataLimite.getDate() + diasPermitidos);
 
+  let multa = 0;
+  let situacao = "";
+
+  if (emprestimo.data_hora_devolucao) {
+    const dataDevolucao = new Date(emprestimo.data_hora_devolucao);
+
+    if (dataDevolucao > dataLimite) {
+      const diffMs = dataDevolucao - dataLimite;
+      multa = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+      situacao = "Devolvido com atraso";
+    } else {
+      situacao = "Devolvido no prazo";
+    }
+
+    return {
+      titulo: emprestimo.titulo,
+      dataEmprestimo,
+      dataDevolucao: new Date(emprestimo.data_hora_devolucao),
+      situacao,
+      multa
+    };
+  }
+
+  const hoje = new Date();
   const atrasado = hoje > dataLimite;
+
+  if (atrasado) {
+    const diffMs = hoje - dataLimite;
+    multa = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+  }
+
+  situacao = atrasado ? "Atrasado" : "Em posse";
 
   return {
     titulo: emprestimo.titulo,
-    situacao: atrasado ? "Atrasado" : "Em dia"
+    dataEmprestimo,
+    dataDevolucao: null,
+    situacao,
+    multa,
+    multa
   };
 };
 
-module.exports = {verificarQuantidadeLivrosLocatario, verificarSituacaoEmprestimo}
+
+module.exports = {
+  verificarQuantidadeLivrosLocatario,
+  verificarSituacaoEmprestimo,
+};

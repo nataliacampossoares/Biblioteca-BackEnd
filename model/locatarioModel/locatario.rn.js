@@ -7,11 +7,8 @@ const verificarCurso = async function (locatario) {
     if (!locatario) {
       return null;
     }
-    console.log("OLA VERIFICARCURSOO");
-    console.log(locatario);
     const cursoExiste = await cursoDAO.buscarCursoPorId(locatario);
-    console.log("CURSO EXISTE AQUI Ó");
-    console.log(cursoExiste);
+    
     if (!cursoExiste) {
       throw new Error("Curso informado não existe.");
     }
@@ -36,26 +33,5 @@ const verificarEmailBibliotecario = async function ({ email }) {
   }
 };
 
-function verificarSituacaoEmprestimo(emprestimo, cargo) {
-  const dataEmprestimo = new Date(emprestimo.data_hora_emprestimo);
-  const hoje = new Date();
 
-  let diasPermitidos = 7;
-
-  if (cargo === "professor") {
-    diasPermitidos = 30;
-  }
-
-  const dataLimite = new Date(dataEmprestimo);
-  dataLimite.setDate(dataEmprestimo.getDate() + diasPermitidos);
-
-  const atrasado = hoje > dataLimite;
-
-  return {
-    titulo: emprestimo.titulo,
-    situacao: atrasado ? "Atrasado" : "Em dia"
-  };
-}
-
-
-module.exports = { verificarCurso, verificarEmailBibliotecario, verificarSituacaoEmprestimo };
+module.exports = { verificarCurso, verificarEmailBibliotecario };
