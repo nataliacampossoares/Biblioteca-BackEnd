@@ -4,13 +4,17 @@ const path = require("path");
 const listarLivros = async function () {
   try {
     const { rows } = await Pool.query(
-      `SELECT l.*, a.nome_autor, c.nome_categoria
+      `SELECT 
+        l.*,
+        COALESCE(json_agg(DISTINCT a.nome_autor) FILTER (WHERE a.nome_autor IS NOT NULL), '[]') AS autores,
+        COALESCE(json_agg(DISTINCT c.nome_categoria) FILTER (WHERE c.nome_categoria IS NOT NULL), '[]') AS categorias
       FROM livros l
+      LEFT JOIN autor_livro al ON l.id = al.id_livro
+      LEFT JOIN autores a ON al.id_autor = a.id
       LEFT JOIN livro_categoria lc ON l.id = lc.id_livro
       LEFT JOIN categorias c ON lc.id_categoria = c.id_categoria
-      LEFT JOIN autor_livro al ON l.id = al.id_livro    
-      LEFT JOIN autores a ON al.id_autor = a.id
-      WHERE l.isAtivo = true`
+      WHERE l.isAtivo = true
+      GROUP BY l.id;`
     );
     return rows;
   } catch (error) {
@@ -48,12 +52,12 @@ const cadastrarLivro = async function (livro) {
       livro.id_editora,
     ]);
     const livroId = result.rows[0].id;
-     
+
     if (livro.id_categoria) {
       await cadastrarCategoriaEmLivro(livroId, livro.id_categoria);
     }
-   
-    if (livro.id_subcategoria) {  
+
+    if (livro.id_subcategoria) {
     }
 
     if (livro.id_autor) {
@@ -87,7 +91,7 @@ const atualizarLivro = async function (id_livro, livro, imagem) {
     livro.descricao,
     livro.isbn,
     livro.id_editora,
-    id_livro
+    id_livro,
   ];
   await Pool.query(query, values);
 };
@@ -105,7 +109,13 @@ const removerAutoresDoLivro = async function (id_livro) {
 const salvarImagemLivro = async function (imagem, titulo) {
   try {
     const extensao = path.extname(imagem.name);
-    const caminho = path.join(__dirname, "..", "..", "imagensLivro", `${titulo}.${extensao}`);
+    const caminho = path.join(
+      __dirname,
+      "..",
+      "..",
+      "imagensLivro",
+      `${titulo}.${extensao}`
+    );
 
     await imagem.mv(caminho);
 
@@ -144,8 +154,12 @@ const cadastrarCategoriaEmLivro = async function (id_livro, id_categoria) {
   }
 };
 
-const cadastrarSubcategoriaEmLivro = async function (id_livro, id_subcategoria) {
-  const query = "INSERT INTO livro_subcategoria(id_livro, id_subcategoria) values ($1, $2)";
+const cadastrarSubcategoriaEmLivro = async function (
+  id_livro,
+  id_subcategoria
+) {
+  const query =
+    "INSERT INTO livro_subcategoria(id_livro, id_subcategoria) values ($1, $2)";
   let values = [id_livro, id_subcategoria];
   try {
     await Pool.query(query, values);
@@ -156,29 +170,40 @@ const cadastrarSubcategoriaEmLivro = async function (id_livro, id_subcategoria) 
   }
 };
 
-const buscarLivroPorId = async function(id_livro){
-  const query =  `SELECT l.*, a.nome_autor, c.nome_categoria, e.nome_editora
-  FROM livros l
-  LEFT JOIN livro_categoria lc ON l.id = lc.id_livro
-  LEFT JOIN categorias c ON lc.id_categoria = c.id_categoria
-  LEFT JOIN autor_livro al ON l.id = al.id_livro    
-  LEFT JOIN autores a ON al.id_autor = a.id
-  LEFT JOIN editoras e ON l.id_editora = e.id
-  WHERE l.id = $1 AND l.isAtivo = true`;
+const buscarLivroPorId = async function (id_livro) {
+  const query = ` SELECT 
+      l.*,
+      e.nome_editora,
+      COALESCE(
+        json_agg(DISTINCT a.nome_autor) 
+          FILTER (WHERE a.nome_autor IS NOT NULL), '[]'
+      ) AS autores,
+      COALESCE(
+        json_agg(DISTINCT c.nome_categoria) 
+          FILTER (WHERE c.nome_categoria IS NOT NULL), '[]'
+      ) AS categorias
+    FROM livros l
+    LEFT JOIN editoras e ON l.id_editora = e.id
+    LEFT JOIN autor_livro al ON l.id = al.id_livro
+    LEFT JOIN autores a ON al.id_autor = a.id
+    LEFT JOIN livro_categoria lc ON l.id = lc.id_livro
+    LEFT JOIN categorias c ON lc.id_categoria = c.id_categoria
+    WHERE l.id = $1 AND l.isAtivo = true
+    GROUP BY l.id, e.nome_editora`;
   const values = [id_livro];
 
   try {
     console.log("ID do livro recebido no DAO:", id_livro);
     const result = await Pool.query(query, values);
     if (result.rows.length === 0) {
-      return; 
+      return;
     }
     return result.rows[0];
   } catch (error) {
     console.error("Erro no DAO: buscarLivroPorId()", error);
     throw error;
   }
-}
+};
 
 //PESQUISAS DO LIVRO ------------------------------------------------
 const pesquisarPorTitulo = async function (titulo) {
@@ -203,13 +228,33 @@ const pesquisarPorAutor = async function (autor) {
 
 const pesquisarPorCategoria = async function (categoria) {
   const query = `
-    SELECT l.*
+     SELECT 
+      l.*,
+      COALESCE(json_agg(DISTINCT c.nome_categoria) FILTER (WHERE c.nome_categoria IS NOT NULL), '[]') AS categorias,
+      COALESCE(json_agg(DISTINCT a.nome_autor) FILTER (WHERE a.nome_autor IS NOT NULL), '[]') AS autores
     FROM livros l
     JOIN livro_categoria lc ON l.id = lc.id_livro
     JOIN categorias c ON lc.id_categoria = c.id_categoria
+    LEFT JOIN autor_livro al ON l.id = al.id_livro
+    LEFT JOIN autores a ON al.id_autor = a.id
     WHERE c.nome_categoria ILIKE $1
+    GROUP BY l.id
+
   `;
   const values = [`%${categoria}%`];
+  const result = await Pool.query(query, values);
+  return result.rows;
+};
+
+const pesquisarPorSubcategoria = async function (subcategoria) {
+  const query = `
+    SELECT l.*
+    FROM livros l
+    JOIN livro_subcategoria ls ON l.id = ls.id_livro
+    JOIN subcategorias s ON ls.id_subcategoria = s.id_subcategoria
+    WHERE s.id_subcategoria = $1
+  `;
+  const values = [subcategoria];
   const result = await Pool.query(query, values);
   return result.rows;
 };
@@ -237,14 +282,14 @@ const buscarLivroPorISBN = async function (isbn) {
   try {
     const result = await Pool.query(query, values);
     if (result.rows.length === 0) {
-      return; 
+      return;
     }
     return result.rows[0];
   } catch (error) {
     console.error("Erro no DAO: buscarLivroPorISBN()", error);
     throw error;
   }
-};    
+};
 
 module.exports = {
   cadastrarLivro,
@@ -261,5 +306,7 @@ module.exports = {
   removerAutoresDoLivro,
   removerCategoriasDoLivro,
   buscarLivroPorId,
-  buscarLivroPorISBN
+  buscarLivroPorISBN,
+  cadastrarSubcategoriaEmLivro,
+  pesquisarPorSubcategoria,
 };

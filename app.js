@@ -223,6 +223,16 @@ app.get("/pesquisarPorCategoria/:categoria", async function (req, res) {
   }
 });
 
+app.get("/pesquisarPorSubcategoria/:subcategoria", async function (req, res) {
+  try {
+    const { subcategoria } = req.params;
+    const livros = await livroController.pesquisarPorSubcategoria(subcategoria);
+    res.json(livros);
+  } catch (err) {
+    res.status(500).send("Erro ao pesquisar por Subcategoria.");
+  }
+});
+
 app.get("/pesquisarPorEditora/:editora", async function (req, res) {
   try {
     const { editora } = req.params;

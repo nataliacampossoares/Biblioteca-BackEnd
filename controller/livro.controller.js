@@ -134,6 +134,10 @@ const pesquisarPorCategoria = async (categoria) => {
   return await livroDAO.pesquisarPorCategoria(categoria);
 };
 
+const pesquisarPorSubcategoria = async (subcategoria) => {
+  return await livroDAO.pesquisarPorSubcategoria(subcategoria);
+};
+
 const pesquisarPorEditora = async (editora) => {
   return await livroDAO.pesquisarPorEditora(editora);
 };
@@ -145,6 +149,7 @@ module.exports = {
   pesquisarPorTitulo,
   pesquisarPorAutor,
   pesquisarPorCategoria,
+  pesquisarPorSubcategoria,
   pesquisarPorEditora,
   atualizarLivro,
   listarLivroPorId,
