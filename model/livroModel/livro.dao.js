@@ -248,11 +248,11 @@ const pesquisarPorCategoria = async function (categoria) {
 
 const pesquisarPorSubcategoria = async function (subcategoria) {
   const query = `
-    SELECT l.*
-    FROM livros l
-    JOIN livro_subcategoria ls ON l.id = ls.id_livro
-    JOIN subcategorias s ON ls.id_subcategoria = s.id_subcategoria
-    WHERE s.id_subcategoria = $1
+   SELECT l.*
+FROM livros l
+JOIN livro_categoria lc ON l.id = lc.id_livro
+JOIN categorias c ON lc.id_categoria = c.id_categoria
+WHERE c.id_categoria = $1
   `;
   const values = [subcategoria];
   const result = await Pool.query(query, values);

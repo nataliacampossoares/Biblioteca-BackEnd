@@ -225,10 +225,12 @@ app.get("/pesquisarPorCategoria/:categoria", async function (req, res) {
 
 app.get("/pesquisarPorSubcategoria/:subcategoria", async function (req, res) {
   try {
-    const { subcategoria } = req.params;
+    const subcategoria = parseInt(req.params.subcategoria);
     const livros = await livroController.pesquisarPorSubcategoria(subcategoria);
+    console.log("Livros encontrados por subcategoria:", livros);
     res.json(livros);
   } catch (err) {
+    console.error("Erro ao pesquisar por Subcategoria:", err);
     res.status(500).send("Erro ao pesquisar por Subcategoria.");
   }
 });
