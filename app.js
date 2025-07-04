@@ -637,6 +637,9 @@ app.post("/cadastrarEmprestimo", async function (req, res) {
   } catch (error) {
     if (error.message === "livro indisponivel") {
       return res.status(400).send("Livro indisponível para empréstimo.");
+    } else if (error.message.startsWith("emprestimo bloqueado:")) {
+      const motivo = error.message.replace("emprestimo bloqueado: ", "");
+      return res.status(400).json({ erro: "Empréstimo bloqueado", motivo });
     }
 
     console.error("Erro ao cadastrar empréstimo:", error);
@@ -694,7 +697,6 @@ app.get("/emprestimosAtuais/:id_locatario", async (req, res) => {
     res.status(500).send("Erro ao buscar empréstimos atuais do usuário.");
   }
 });
-
 
 app.get("/buscarLivroPorISBN/:isbn", async (req, res) => {
   console.log("OLAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
