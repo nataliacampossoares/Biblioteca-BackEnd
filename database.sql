@@ -25,13 +25,13 @@ CREATE TABLE autores (
 -- EDITORAS
 CREATE TABLE editoras (
     id SERIAL PRIMARY KEY,
-    nome_editora VARCHAR(20)
+    nome_editora VARCHAR(60)
 );
 
 -- CATEGORIAS COM HIERARQUIA (categoria pai/filha)
 CREATE TABLE categorias (
     id_categoria SERIAL PRIMARY KEY,
-    nome_categoria VARCHAR(50) NOT NULL,
+    nome_categoria VARCHAR(60) NOT NULL,
     id_pai INT,
     FOREIGN KEY (id_pai) REFERENCES categorias (id_categoria)
 );
@@ -39,7 +39,7 @@ CREATE TABLE categorias (
 -- LIVROS
 CREATE TABLE livros (
     id SERIAL PRIMARY KEY,
-    titulo VARCHAR(30) NOT NULL,
+    titulo VARCHAR(120) NOT NULL,
     qtd_disponivel INT NOT NULL,
     edicao INT NOT NULL,
     caminho_imagens TEXT,
@@ -78,11 +78,11 @@ CREATE TABLE cursos (
 CREATE TABLE locatarios (
     id SERIAL PRIMARY KEY,
     id_curso INT,
-    nome VARCHAR(50),
+    nome VARCHAR(60),
     data_de_nascimento DATE,
     telefone VARCHAR(20),
     isAtivo BOOLEAN DEFAULT true,
-    email VARCHAR(50),
+    email VARCHAR(60),
     qtde_livros INT DEFAULT 0, 
     FOREIGN KEY(id_curso) REFERENCES cursos(id)
 );
@@ -102,8 +102,8 @@ CREATE TABLE professores (
 -- BIBLIOTECÁRIOS
 CREATE TABLE bibliotecarios (
     id_locatario INT PRIMARY KEY REFERENCES locatarios(id),
-    senha VARCHAR(20),
-    imagem VARCHAR(20)
+    senha VARCHAR(60),
+    imagem VARCHAR(60)
 );
 
 -- EMPRÉSTIMOS

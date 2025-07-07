@@ -234,6 +234,18 @@ app.get("/pesquisarPorCategoria/:categoria", async function (req, res) {
   }
 });
 
+app.get("/pesquisarPorSubcategoria/:subcategoria", async function (req, res) {
+  try {
+    const subcategoria = parseInt(req.params.subcategoria);
+    const livros = await livroController.pesquisarPorSubcategoria(subcategoria);
+    console.log("Livros encontrados por subcategoria:", livros);
+    res.json(livros);
+  } catch (err) {
+    console.error("Erro ao pesquisar por Subcategoria:", err);
+    res.status(500).send("Erro ao pesquisar por Subcategoria.");
+  }
+});
+
 app.get("/pesquisarPorEditora/:editora", async function (req, res) {
   try {
     const { editora } = req.params;
@@ -636,6 +648,9 @@ app.post("/cadastrarEmprestimo", async function (req, res) {
   } catch (error) {
     if (error.message === "livro indisponivel") {
       return res.status(400).send("Livro indisponível para empréstimo.");
+    } else if (error.message.startsWith("emprestimo bloqueado:")) {
+      const motivo = error.message.replace("emprestimo bloqueado: ", "");
+      return res.status(400).json({ erro: "Empréstimo bloqueado", motivo });
     }
 
     console.error("Erro ao cadastrar empréstimo:", error);
@@ -693,7 +708,6 @@ app.get("/emprestimosAtuais/:id_locatario", async (req, res) => {
     res.status(500).send("Erro ao buscar empréstimos atuais do usuário.");
   }
 });
-
 
 app.get("/buscarLivroPorISBN/:isbn", async (req, res) => {
   console.log("OLAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
