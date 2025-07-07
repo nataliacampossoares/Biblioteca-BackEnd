@@ -80,6 +80,7 @@ app.post("/cadastrarLivro", async function (req, res) {
       isbn
     );
 
+  
     let autoresModels = [];
     let autoresArray = [];
     if (typeof autores == "string") {
@@ -111,6 +112,16 @@ app.post("/cadastrarLivro", async function (req, res) {
       imagem
     );
     res.status(201).send("Livro cadastrado com sucesso.");
+    console.log("Dados recebidos:", {
+      autores,
+      categorias,
+      id_editora,
+      titulo,
+      qtd_disponivel,
+      edicao,
+      descricao,
+      isbn,
+    });
   } catch (error) {
     console.error("Erro ao cadastrar livro:", error);
     res.status(500).send("Erro ao cadastrar livro.");
