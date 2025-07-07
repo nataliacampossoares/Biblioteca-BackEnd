@@ -47,17 +47,17 @@ git clone https://github.com/nataliacampossoares/backend-biblioteca.git
 
 cd backend-biblioteca
 
-3. Instale as dependênicias:
+2. Instale as dependências:
 
 npm install
 
-5. Crie e configure o banco de dados PostgreSQL:
+3. Crie e configure o banco de dados PostgreSQL:
 
 O banco utilizado se chama Biblioteca.
 
 Utilize o arquivo database.sql (ou equivalente) com os comandos de criação das tabelas.
 
-7. Inicie o servidor:
+4. Inicie o servidor:
    
 node app.js
 
