@@ -31,6 +31,40 @@ const atualizarQuantidadeLivro = async function (id_livro) {
   }
 };
 
+const emprestimoAtrasado = async function (id_locatario, id_livro) {
+  const query = `
+    UPDATE emprestimos
+    SET status = true
+    WHERE id_locatario = $1 AND id_livro = $2 AND data_hora_devolucao IS NULL
+  `;
+
+  try {
+    await Pool.query(query, [id_locatario, id_livro]);
+  } catch (error) {
+    console.error("Erro ao marcar empréstimo como atrasado:", error);
+    throw error;
+  }
+};
+
+const quitarMulta = async function (id_locatario, id_livro) {
+  const query = `
+  UPDATE emprestimos
+  SET status = false
+  WHERE id_locatario = $1 AND id_livro = $2 AND status = true
+  RETURNING *;
+`;
+
+  try {
+    const result = await Pool.query(query, [id_locatario, id_livro]);
+    console.log("Resultado da quitação de multa:", result.rows);
+    console.log("IDS", id_locatario, id_livro);
+    return result.rows[0];
+  } catch (error) {
+    console.error("Erro ao quitar multa", error);
+    throw error;
+  }
+};
+
 const registrarDevolucao = async function (emprestimo) {
   const query = `
       UPDATE emprestimos
@@ -39,7 +73,10 @@ const registrarDevolucao = async function (emprestimo) {
     `;
 
   try {
-    const result = await Pool.query(query, [emprestimo.id_locatario, emprestimo.id_livro]);
+    const result = await Pool.query(query, [
+      emprestimo.id_locatario,
+      emprestimo.id_livro,
+    ]);
     if (result.rowCount === 0) {
       throw new Error("livro no banco");
     }
@@ -96,16 +133,16 @@ const buscarEmprestimosAtuaisPorUsuario = async function (id_locatario) {
         FROM emprestimos e
         JOIN livros l ON e.id_livro = l.id
         WHERE e.id_locatario = $1 AND e.data_hora_devolucao IS NULL;
-    `; 
+    `;
 
-    try{
-      const result = await Pool.query(query, [id_locatario])
-      return result.rows
-    } catch (error){
-      console.error("Erro ao buscar empréstimos por usuário:", error);
+  try {
+    const result = await Pool.query(query, [id_locatario]);
+    return result.rows;
+  } catch (error) {
+    console.error("Erro ao buscar empréstimos por usuário:", error);
     throw error;
-    }
   }
+};
 
 module.exports = {
   cadastrarEmprestimo,
@@ -113,5 +150,7 @@ module.exports = {
   registrarDevolucao,
   atualizarQuantidadeLivroDevolucao,
   buscarEmprestimosPorUsuario,
-  buscarEmprestimosAtuaisPorUsuario
+  buscarEmprestimosAtuaisPorUsuario,
+  emprestimoAtrasado,
+  quitarMulta
 };

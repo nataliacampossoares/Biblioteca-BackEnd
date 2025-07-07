@@ -57,11 +57,13 @@ const verificarSituacaoEmprestimo = function (emprestimo, cargo) {
     }
     
     return {
+      id_locatario: emprestimo.id_locatario,
+      id_livro: emprestimo.id_livro,
       titulo: emprestimo.titulo,
       dataEmprestimo,
-      dataDevolucao: new Date(emprestimo.data_hora_devolucao),
       situacao,
-      multa
+      multa,
+      dataDevolucao: new Date(emprestimo.data_hora_devolucao),
     };
   }
 
@@ -71,18 +73,19 @@ const verificarSituacaoEmprestimo = function (emprestimo, cargo) {
   if (atrasado) {
     const diffMs = hoje - dataLimite;
     multa = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-    
+    emprestimoDAO.emprestimoAtrasado(emprestimo.id_locatario, emprestimo.id_livro);
   }
   
   situacao = atrasado ? "Atrasado" : "Em posse";
 
   return {
+    id_locatario: emprestimo.id_locatario,
+    id_livro: emprestimo.id_livro,
     titulo: emprestimo.titulo,
     dataEmprestimo,
     dataDevolucao: null,
     situacao,
     multa,
-    multa
   };
 };
 

@@ -699,7 +699,6 @@ app.get("/emprestimosAtuais/:id_locatario", async (req, res) => {
 });
 
 app.get("/buscarLivroPorISBN/:isbn", async (req, res) => {
-  console.log("OLAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
   try {
     const { isbn } = req.params;
     const livro = await livroController.buscarPorISBN(isbn);
@@ -721,6 +720,18 @@ app.get("/buscarLocatario/:id", async (req, res) => {
     res.status(500).send("Erro ao buscar locatário.");
   }
 });
+
+app.post("/quitarMulta", async (req, res) => {
+  try {
+    const { id_locatario, id_livro } = req.body;
+   
+    const resultado = await emprestimoController.quitarMulta(id_locatario, id_livro);
+
+    res.status(200).json({ mensagem: "Multa quitada com sucesso.", resultado });
+  }catch (error){
+    res.status(500).send("Erro ao buscar quitar multa.");
+   }
+})
 
 //-------------------------------------------------------------------------
 

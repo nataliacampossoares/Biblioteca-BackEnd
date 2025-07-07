@@ -76,6 +76,10 @@ const processarDevolucao = async function (devolucao) {
   }
 };
 
+async function quitarMulta(id_locatario, id_livro) {
+  return await emprestimoDAO.quitarMulta(id_locatario, id_livro);
+}     
+
 const buscarEmprestimosPorUsuario = async function (id_locatario) {
   const emprestimos = await emprestimoDAO.buscarEmprestimosPorUsuario(
     id_locatario
@@ -111,4 +115,5 @@ module.exports = {
   processarEmprestimo,
   processarDevolucao,
   buscarEmprestimosAtuaisPorUsuario,
+  quitarMulta
 };
