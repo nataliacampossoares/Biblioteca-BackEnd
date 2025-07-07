@@ -56,6 +56,8 @@ Utilize o arquivo database.sql (ou equivalente) com os comandos de criação das
 node app.js
 O servidor será iniciado na porta 3000.
 
+---
+
 ## 🤝 Frontend
 O frontend deste projeto está disponível em:
 
