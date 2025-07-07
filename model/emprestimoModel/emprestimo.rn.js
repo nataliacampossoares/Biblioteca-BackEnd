@@ -96,6 +96,7 @@ const podeFazerEmprestimo = async function (id_locatario) {
   const quantidade = await locatarioDAO.verificarQuantidadeLivrosLocatario(id_locatario);
   const emprestimos = await emprestimoDAO.buscarEmprestimosAtuaisPorUsuario(id_locatario);
 
+
   const cargo = professor ? "Professor" : aluno ? "Aluno" : "Outro";
 
   for (const emprestimo of emprestimos) {
@@ -113,6 +114,14 @@ const podeFazerEmprestimo = async function (id_locatario) {
     return {
       permitido: false,
       motivo: "Você já atingiu o limite de livros emprestados.",
+    };
+  }
+
+  const multasPendentes = await emprestimoDAO.buscarMultasPendentes(id_locatario);
+  if (multasPendentes.length > 0) {
+    return {
+      permitido: false,
+      motivo: "Você possui multas pendentes.",
     };
   }
 

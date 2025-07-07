@@ -144,6 +144,19 @@ const buscarEmprestimosAtuaisPorUsuario = async function (id_locatario) {
   }
 };
 
+const buscarMultasPendentes = async function (id_locatario) {
+  const query = `
+    SELECT * FROM emprestimos
+    WHERE id_locatario = $1 AND status = true
+  `;
+  try {
+    const result = await Pool.query(query, [id_locatario]);
+    return result.rows;
+  } catch (error) {
+    console.error("Erro ao buscar multas pendentes:", error);
+    throw error;
+}};
+
 module.exports = {
   cadastrarEmprestimo,
   atualizarQuantidadeLivro,
@@ -152,5 +165,6 @@ module.exports = {
   buscarEmprestimosPorUsuario,
   buscarEmprestimosAtuaisPorUsuario,
   emprestimoAtrasado,
-  quitarMulta
+  quitarMulta,
+  buscarMultasPendentes
 };
