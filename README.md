@@ -31,7 +31,9 @@ O projeto está dividido em:
 Crie um arquivo `.env` na raiz do projeto com o seguinte conteúdo:
 
 CONNECTION_STRING=postgres://postgres:postgres@localhost:5432/Biblioteca
+
 EMAIL_ADDRESS=seu_email@gmail.com
+
 EMAIL_PASS=sua_senha_de_app
 
 ⚠️ A senha do email deve ser uma senha de app (não a senha da conta Google). Você pode gerar essa senha em: https://myaccount.google.com/apppasswords
