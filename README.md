@@ -42,18 +42,25 @@ EMAIL_PASS=sua_senha_de_app
 
 ## 🔌 Como Rodar o Projeto
 1. Clone o repositório:
+
 git clone https://github.com/nataliacampossoares/backend-biblioteca.git
+
 cd backend-biblioteca
 
-2. Instale as dependênicias:
+3. Instale as dependênicias:
+
 npm install
 
-3. Crie e configure o banco de dados PostgreSQL:
+5. Crie e configure o banco de dados PostgreSQL:
+
 O banco utilizado se chama Biblioteca.
+
 Utilize o arquivo database.sql (ou equivalente) com os comandos de criação das tabelas.
 
-4. Inicie o servidor:
+7. Inicie o servidor:
+   
 node app.js
+
 O servidor será iniciado na porta 3000.
 
 ---
