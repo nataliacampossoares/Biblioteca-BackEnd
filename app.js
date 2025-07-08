@@ -43,7 +43,6 @@ const Emprestimo = require("./entidades/emprestimo");
 
 app.get("/listarLivros", async function (req, res) {
   const resultado = await livroController.listarLivros();
-  console.log("Resultado da listagem de livros:", resultado);
   res.json(resultado);
 });
 
@@ -418,7 +417,6 @@ app.post("/alterarEditora/:id", async function (req, res) {
 
 app.get("/listarCategorias", async function (req, res) {
   const resultado = await categoriaController.listarCategorias();
-  console.log("Resultado da listagem de categorias:", resultado);
   res.json(resultado);
 });
 
@@ -427,7 +425,6 @@ app.get("/listarSubcategorias/:id", async function (req, res) {
   const resultado = await categoriaController.listarSubcategorias(
     req.params.id
   );
-  console.log("OIIIIIIIIIIIIII", resultado);
   res.json(resultado);
 });
 
