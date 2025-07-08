@@ -164,24 +164,40 @@ app.post("/alterarLivro/:id", async function (req, res) {
       isbn
     );
 
+    // Tratamento seguro para autores
     let autoresModels = [];
     let autoresArray = [];
-    if (typeof autores === "string") {
-      autoresArray = JSON.parse(autores);
-    } else {
-      autoresArray = autores;
+
+    try {
+      autoresArray =
+        typeof autores === "string" && autores.trim() !== ""
+          ? JSON.parse(autores)
+          : Array.isArray(autores)
+          ? autores
+          : [];
+    } catch (e) {
+      console.warn("Erro ao fazer parse dos autores:", e);
+      autoresArray = [];
     }
 
     for (let autor of autoresArray) {
       autoresModels.push(new Autor(autor));
     }
 
+    // Tratamento seguro para categorias
     let categoriasModels = [];
     let categoriasArray = [];
-    if (typeof categorias === "string") {
-      categoriasArray = JSON.parse(categorias);
-    } else {
-      categoriasArray = categorias;
+
+    try {
+      categoriasArray =
+        typeof categorias === "string" && categorias.trim() !== ""
+          ? JSON.parse(categorias)
+          : Array.isArray(categorias)
+          ? categorias
+          : [];
+    } catch (e) {
+      console.warn("Erro ao fazer parse das categorias:", e);
+      categoriasArray = [];
     }
 
     for (let categoria of categoriasArray) {
