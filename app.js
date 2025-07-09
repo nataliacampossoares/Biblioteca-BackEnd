@@ -68,6 +68,16 @@ app.post("/cadastrarLivro", async function (req, res) {
       descricao,
       isbn,
     } = req.body;
+    console.log("Dados recebidos:", {
+      autores,
+      categorias,
+      id_editora,
+      titulo,
+      qtd_disponivel,
+      edicao,
+      descricao,
+      isbn,
+    });
     const imagem = req.files ? req.files.imagem : null;
     const livro = new Livro(
       id_editora,

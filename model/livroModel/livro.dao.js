@@ -237,7 +237,7 @@ const pesquisarPorCategoria = async function (categoria) {
     JOIN categorias c ON lc.id_categoria = c.id_categoria
     LEFT JOIN autor_livro al ON l.id = al.id_livro
     LEFT JOIN autores a ON al.id_autor = a.id
-    WHERE c.nome_categoria ILIKE $1
+    WHERE c.nome_categoria ILIKE $1 AND l.isAtivo = true
     GROUP BY l.id
 
   `;
@@ -252,7 +252,7 @@ const pesquisarPorSubcategoria = async function (subcategoria) {
 FROM livros l
 JOIN livro_categoria lc ON l.id = lc.id_livro
 JOIN categorias c ON lc.id_categoria = c.id_categoria
-WHERE c.id_categoria = $1
+WHERE c.id_categoria = $1 AND l.isAtivo = true
   `;
   const values = [subcategoria];
   const result = await Pool.query(query, values);
