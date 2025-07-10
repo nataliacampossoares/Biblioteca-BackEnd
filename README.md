@@ -69,3 +69,7 @@ O servidor será iniciado na porta 3000.
 O frontend deste projeto está disponível em:
 
 👉 https://github.com/nataliacampossoares/Biblioteca
+
+---
+
+Trabalho desenvolvido por Natália Campos Soares (backend) e Lara Heloisa Silva Deitos (frontend).
