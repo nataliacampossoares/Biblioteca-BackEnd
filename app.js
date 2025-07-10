@@ -1,5 +1,4 @@
 const express = require("express");
-const { Pool } = require("./config/database");
 const app = express();
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
@@ -10,7 +9,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/imagensBibliotecario", express.static("./imagensBibliotecario"));
 app.use("/imagensLivro", express.static("./imagensLivro"));
-const email = require("./config/email");
 
 const livroController = require("./controller/livro.controller");
 const Livro = require("./entidades/livro");
@@ -470,7 +468,7 @@ app.get("/removerCategoria/:id", async function (req, res) {
     console.error("Erro ao remover categoria:", error);
     res.status(500).send("Erro ao remover categoria.");
   }
-});
+}); 
 
 app.post("/alterarCategoria/:id", async function (req, res) {
   const categoriaAtualizada = {

@@ -4,9 +4,6 @@ const cursoController = require("./curso.controller");
 
 const cadastrarLocatario = async function (locatario) {
   try {
-    console.log(locatario);
-    console.log("OIA AQUI VAO CONSOLAR O LOCAARIO.ID_CURSO");
-    console.log(locatario.id_curso);
 
     let cursoCadastrado = true;
 
